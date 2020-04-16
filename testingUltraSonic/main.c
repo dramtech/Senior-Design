@@ -74,13 +74,16 @@ __interrupt void TimerB0(void)
     if (TB0CCTL4 & CCI)            // Raising edge
     {
         up_counter = TB0CCR4;      // Copy counter to variable
+        //P1OUT |= LED1;
+
     }
     else                        // Falling edge
     {
         // Formula: Distance in cm = (Time in uSec)/58
-        distance_cm = (TB0CCR4 - up_counter)/58;
+        distance_cm = (TB0CCR4 - up_counter) / 58;
     }
-    TB0CTL &= ~TAIFG;           // Clear interrupt flag - handled
+    TB0CCTL4 &= ~CCIFG;
+    //TB0CTL &= ~TAIFG;           // Clear interrupt flags - handled
 }
 
 unsigned char set_data(unsigned char value)
@@ -96,13 +99,13 @@ void timer_init()
     Timer B Capture/Compare Control 0 =>
     capture mode: 1 - both edges +
     capture sychronize +
-    capture input select 0 => P1.1 (CCI1A) +
+    capture input select 0 => P1.1 (CCI4B) +
     capture mode +
     capture compare interrupt enable */
     TB0CCTL4 |= CM_3 + SCS + CCIS_1 + CAP + CCIE;
 
     /* Timer B Control configuration =>
-    Timer B clock source select: 1 - SMClock +
+    Timer B clock source select: 2 - SMClock +
     Timer B mode control: 2 - Continous up +
     Timer B clock input divider 0 - No divider */
     TB0CTL |= TBSSEL_2 + MC_2 + ID_0;
@@ -208,6 +211,7 @@ int main()
 
     P1DIR |= LED1; // Set P1.0 as output
     P1OUT &= ~LED1; // Make sure LED is off
+    //setup_SMCLK();
 
     // Initialize LCD
     lcd_init();
@@ -228,7 +232,8 @@ int main()
         US_PORT ^= US_TRIG;                 // deassert
         //__delay_cycles(60000);            // 60ms measurement cycle
         __delay_cycles(500000);             // 0.5sec measurement cycle
-
+        P1OUT |= LED1;
+        //distance_cm = TB0CCR4;
         // displaying the current distance
         //itoa(distance_cm, distance_string, 10);
         sprintf(distance_string, "%d", distance_cm);

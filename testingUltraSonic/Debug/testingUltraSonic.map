@@ -1,7 +1,7 @@
 ******************************************************************************
                   MSP430 Linker Unix v20.2.0                   
 ******************************************************************************
->> Linked Wed Apr 15 23:44:06 2020
+>> Linked Thu Apr 16 14:17:42 2020
 
 OUTPUT FILE NAME:   <testingUltraSonic.out>
 ENTRY POINT SYMBOL: "_c_int00_noargs_mpu"  address: 0000442c
@@ -79,7 +79,7 @@ MEMORY CONFIGURATION
   INT53                 0000fffa   00000002  00000002  00000000  RWIX
   INT54                 0000fffc   00000002  00000002  00000000  RWIX
   RESET                 0000fffe   00000002  00000002  00000000  RWIX
-  FRAM2                 00010000   00014000  0000072a  000138d6  RWIX
+  FRAM2                 00010000   00014000  0000072e  000138d2  RWIX
 
 
 SECTION ALLOCATION MAP
@@ -242,44 +242,44 @@ SYSNMI     0    0000fffc    00000002
                   00004454    00000018     main.obj (.const:.string)
                   0000446c    00000014     rts430x_lc_rd_eabi.lib : _printfi_min.c.obj (.const:.string)
 
-.text      0    00010000    0000072a     
+.text      0    00010000    0000072e     
                   00010000    00000132     rts430x_lc_rd_eabi.lib : _printfi_min.c.obj (.text:_setfield)
                   00010132    000000dc                            : _printfi_min.c.obj (.text:__TI_printfi_minimal)
                   0001020e    000000da                            : _printfi_min.c.obj (.text:_pproc_diouxp)
-                  000102e8    000000b8     main.obj (.text:main)
-                  000103a0    0000008a     main.obj (.text:lcd_reset)
-                  0001042a    00000054     rts430x_lc_rd_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit_hold_wdt:__TI_auto_init_nobinit_nopinit_hold_wdt)
-                  0001047e    00000048                            : _printfi_min.c.obj (.text:_pproc_str)
-                  000104c6    00000044                            : sprintf.c.obj (.text:sprintf)
-                  0001050a    0000003e     main.obj (.text:lcd_data)
-                  00010548    0000003a     main.obj (.text:lcd_cmd)
-                  00010582    0000002c     MSPMPU_INIT_LIB_CCS_msp430_large_code_restricted_data.lib : mpu_init.o (.text:__mpu_init)
-                  000105ae    0000002c     main.obj (.text:lcd_init)
-                  000105da    00000026     rts430x_lc_rd_eabi.lib : memccpy.c.obj (.text:memccpy)
-                  00010600    00000024                            : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init_nomemset:__TI_zero_init_nomemset)
-                  00010624    00000024     main.obj (.text:display_distance)
-                  00010648    00000020     rts430x_lc_rd_eabi.lib : sprintf.c.obj (.text:_outs)
-                  00010668    00000018                            : mult16_f5hw.asm.obj (.text)
-                  00010680    00000016                            : memset.c.obj (.text:memset)
-                  00010696    00000016                            : div16u.asm.obj (.text)
-                  000106ac    00000016     main.obj (.text:set_data)
-                  000106c2    00000014     rts430x_lc_rd_eabi.lib : sprintf.c.obj (.text:_outc)
-                  000106d6    00000014                            : memcpy.c.obj (.text:memcpy)
-                  000106ea    00000014     main.obj (.text:timer_init)
-                  000106fe    00000012     main.obj (.text:display_line)
-                  00010710    0000000e     rts430x_lc_rd_eabi.lib : strlen.c.obj (.text:strlen)
-                  0001071e    00000006                            : exit.c.obj (.text:abort)
-                  00010724    00000004                            : pre_init.c.obj (.text:_system_pre_init)
-                  00010728    00000002                            : startup.c.obj (.text:_system_post_cinit)
+                  000102e8    000000bc     main.obj (.text:main)
+                  000103a4    0000008a     main.obj (.text:lcd_reset)
+                  0001042e    00000054     rts430x_lc_rd_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit_hold_wdt:__TI_auto_init_nobinit_nopinit_hold_wdt)
+                  00010482    00000048                            : _printfi_min.c.obj (.text:_pproc_str)
+                  000104ca    00000044                            : sprintf.c.obj (.text:sprintf)
+                  0001050e    0000003e     main.obj (.text:lcd_data)
+                  0001054c    0000003a     main.obj (.text:lcd_cmd)
+                  00010586    0000002c     MSPMPU_INIT_LIB_CCS_msp430_large_code_restricted_data.lib : mpu_init.o (.text:__mpu_init)
+                  000105b2    0000002c     main.obj (.text:lcd_init)
+                  000105de    00000026     rts430x_lc_rd_eabi.lib : memccpy.c.obj (.text:memccpy)
+                  00010604    00000024                            : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init_nomemset:__TI_zero_init_nomemset)
+                  00010628    00000024     main.obj (.text:display_distance)
+                  0001064c    00000020     rts430x_lc_rd_eabi.lib : sprintf.c.obj (.text:_outs)
+                  0001066c    00000018                            : mult16_f5hw.asm.obj (.text)
+                  00010684    00000016                            : memset.c.obj (.text:memset)
+                  0001069a    00000016                            : div16u.asm.obj (.text)
+                  000106b0    00000016     main.obj (.text:set_data)
+                  000106c6    00000014     rts430x_lc_rd_eabi.lib : sprintf.c.obj (.text:_outc)
+                  000106da    00000014                            : memcpy.c.obj (.text:memcpy)
+                  000106ee    00000014     main.obj (.text:timer_init)
+                  00010702    00000012     main.obj (.text:display_line)
+                  00010714    0000000e     rts430x_lc_rd_eabi.lib : strlen.c.obj (.text:strlen)
+                  00010722    00000006                            : exit.c.obj (.text:abort)
+                  00010728    00000004                            : pre_init.c.obj (.text:_system_pre_init)
+                  0001072c    00000002                            : startup.c.obj (.text:_system_post_cinit)
 
 MODULE SUMMARY
 
        Module                 code   ro data   rw data
        ------                 ----   -------   -------
     ./
-       main.obj               626    26        4      
+       main.obj               630    26        4      
     +--+----------------------+------+---------+---------+
-       Total:                 626    26        4      
+       Total:                 630    26        4      
                                                       
     /home/daniel/ti/ccs1000/ccs/ccs_base/msp430/lib/FR59xx/MSPMPU_INIT_LIB_CCS_msp430_large_code_restricted_data.lib
        mpu_init.o             44     0         0      
@@ -335,7 +335,7 @@ MODULE SUMMARY
        Stack:                 0      0         160    
        Linker Generated:      0      18        0      
     +--+----------------------+------+---------+---------+
-       Grand Total:           1918   120       164    
+       Grand Total:           1922   120       164    
 
 
 LINKER GENERATED COPY TABLES
@@ -611,7 +611,7 @@ address   name
 000009ce  AESAXIN_L                              
 000004be  BCD2BIN                                
 000004bc  BIN2BCD                                
-0001071e  C$$EXIT                                
+00010722  C$$EXIT                                
 0000043e  CAPTIO0CTL                             
 0000043f  CAPTIO0CTL_H                           
 0000043e  CAPTIO0CTL_L                           
@@ -1739,7 +1739,7 @@ address   name
 00004486  __TI_Handler_Table_Base                
 0000448a  __TI_Handler_Table_Limit               
 0000444c  __TI_ISR_TRAP                          
-0001042a  __TI_auto_init_nobinit_nopinit_hold_wdt
+0001042e  __TI_auto_init_nobinit_nopinit_hold_wdt
 0000ffc6  __TI_int27                             
 0000ffc8  __TI_int28                             
 0000ffca  __TI_int29                             
@@ -1772,42 +1772,42 @@ ffffffff  __TI_pprof_out_hndl
 00010132  __TI_printfi_minimal                   
 ffffffff  __TI_prof_data_size                    
 ffffffff  __TI_prof_data_start                   
-00010600  __TI_zero_init_nomemset                
+00010604  __TI_zero_init_nomemset                
 ffffffff  __c_args__                             
 00000001  __mpu_enable                           
-00010582  __mpu_init                             
-00010696  __mspabi_divu                          
-00010668  __mspabi_mpyi_f5hw                     
-00010696  __mspabi_remu                          
+00010586  __mpu_init                             
+0001069a  __mspabi_divu                          
+0001066c  __mspabi_mpyi_f5hw                     
+0001069a  __mspabi_remu                          
 0000442c  _c_int00_noargs_mpu                    
 0000fffe  _reset_vector                          
 00002360  _stack                                 
-00010728  _system_post_cinit                     
-00010724  _system_pre_init                       
-0001071e  abort                                  
-00010624  display_distance                       
-000106fe  display_line                           
+0001072c  _system_post_cinit                     
+00010728  _system_pre_init                       
+00010722  abort                                  
+00010628  display_distance                       
+00010702  display_line                           
 00001c00  distance_cm                            
 00004400  fram_ipe_end                           
 00004400  fram_ipe_start                         
 00004400  fram_rw_start                          
 00004400  fram_rx_start                          
-00010548  lcd_cmd                                
-0001050a  lcd_data                               
-000105ae  lcd_init                               
-000103a0  lcd_reset                              
+0001054c  lcd_cmd                                
+0001050e  lcd_data                               
+000105b2  lcd_init                               
+000103a4  lcd_reset                              
 000102e8  main                                   
-000105da  memccpy                                
-000106d6  memcpy                                 
-00010680  memset                                 
+000105de  memccpy                                
+000106da  memcpy                                 
+00010684  memset                                 
 0000a501  mpu_ctl0_value                         
 00001513  mpu_sam_value                          
 00000440  mpu_segment_border1                    
 00000440  mpu_segment_border2                    
-000106ac  set_data                               
-000104c6  sprintf                                
-00010710  strlen                                 
-000106ea  timer_init                             
+000106b0  set_data                               
+000104ca  sprintf                                
+00010714  strlen                                 
+000106ee  timer_init                             
 00001c02  up_counter                             
 
 
@@ -3243,29 +3243,29 @@ address   name
 0000fffe  _reset_vector                          
 00010132  __TI_printfi_minimal                   
 000102e8  main                                   
-000103a0  lcd_reset                              
-0001042a  __TI_auto_init_nobinit_nopinit_hold_wdt
-000104c6  sprintf                                
-0001050a  lcd_data                               
-00010548  lcd_cmd                                
-00010582  __mpu_init                             
-000105ae  lcd_init                               
-000105da  memccpy                                
-00010600  __TI_zero_init_nomemset                
-00010624  display_distance                       
-00010668  __mspabi_mpyi_f5hw                     
-00010680  memset                                 
-00010696  __mspabi_divu                          
-00010696  __mspabi_remu                          
-000106ac  set_data                               
-000106d6  memcpy                                 
-000106ea  timer_init                             
-000106fe  display_line                           
-00010710  strlen                                 
-0001071e  C$$EXIT                                
-0001071e  abort                                  
-00010724  _system_pre_init                       
-00010728  _system_post_cinit                     
+000103a4  lcd_reset                              
+0001042e  __TI_auto_init_nobinit_nopinit_hold_wdt
+000104ca  sprintf                                
+0001050e  lcd_data                               
+0001054c  lcd_cmd                                
+00010586  __mpu_init                             
+000105b2  lcd_init                               
+000105de  memccpy                                
+00010604  __TI_zero_init_nomemset                
+00010628  display_distance                       
+0001066c  __mspabi_mpyi_f5hw                     
+00010684  memset                                 
+0001069a  __mspabi_divu                          
+0001069a  __mspabi_remu                          
+000106b0  set_data                               
+000106da  memcpy                                 
+000106ee  timer_init                             
+00010702  display_line                           
+00010714  strlen                                 
+00010722  C$$EXIT                                
+00010722  abort                                  
+00010728  _system_pre_init                       
+0001072c  _system_post_cinit                     
 ffffffff  __TI_pprof_out_hndl                    
 ffffffff  __TI_prof_data_size                    
 ffffffff  __TI_prof_data_start                   
