@@ -2,7 +2,7 @@
 <link_info>
    <banner>MSP430 Linker Unix v20.2.0.LTS</banner>
    <copyright>Copyright (c) 2003-2018 Texas Instruments Incorporated</copyright>
-   <link_time>0x5e98a146</link_time>
+   <link_time>0x5e98a2ef</link_time>
    <link_errors>0x0</link_errors>
    <output_file>testingUltraSonic.out</output_file>
    <entry_point>

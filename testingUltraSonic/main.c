@@ -188,7 +188,7 @@ void display_distance(char *line, int len)
         if (*line)
             lcd_data(*line++);
         else
-            lcd_data(' ');
+            lcd_data('    ');
 }
 
 
@@ -232,7 +232,7 @@ int main()
         US_PORT ^= US_TRIG;                 // deassert
         //__delay_cycles(60000);            // 60ms measurement cycle
         __delay_cycles(500000);             // 0.5sec measurement cycle
-        P1OUT |= LED1;
+        P1OUT ^= LED1;
         //distance_cm = TB0CCR4;
         // displaying the current distance
         //itoa(distance_cm, distance_string, 10);
