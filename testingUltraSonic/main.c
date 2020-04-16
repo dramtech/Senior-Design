@@ -188,7 +188,7 @@ void display_distance(char *line, int len)
         if (*line)
             lcd_data(*line++);
         else
-            lcd_data('    ');
+            lcd_data(' ');
 }
 
 
