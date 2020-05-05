@@ -1,7 +1,7 @@
 ******************************************************************************
                   MSP430 Linker PC v18.12.3                    
 ******************************************************************************
->> Linked Tue May  5 03:54:27 2020
+>> Linked Tue May  5 04:28:22 2020
 
 OUTPUT FILE NAME:   <Bluetooth.out>
 ENTRY POINT SYMBOL: "_c_int00_noinit_noargs_mpu"  address: 00004400
@@ -79,7 +79,7 @@ MEMORY CONFIGURATION
   INT53                 0000fffa   00000002  00000002  00000000  RWIX
   INT54                 0000fffc   00000002  00000002  00000000  RWIX
   RESET                 0000fffe   00000002  00000002  00000000  RWIX
-  FRAM2                 00010000   00014000  000000b2  00013f4e  RWIX
+  FRAM2                 00010000   00014000  000000b8  00013f48  RWIX
 
 
 SECTION ALLOCATION MAP
@@ -230,23 +230,24 @@ SYSNMI     0    0000fffc    00000002
 .reset     0    0000fffe    00000002     
                   0000fffe    00000002     rts430x_lc_rd_eabi.lib : boot.c.obj (.reset)
 
-.text      0    00010000    000000b2     
+.text      0    00010000    000000b8     
                   00010000    0000002c     MSPMPU_INIT_LIB_CCS_msp430_large_code_restricted_data.lib : mpu_init.o (.text:__mpu_init)
-                  0001002c    00000028     main.obj (.text:Recieve)
-                  00010054    00000024     main.obj (.text:Initialize_UART)
-                  00010078    00000022     main.obj (.text:main)
-                  0001009a    0000000e     main.obj (.text:Transmit)
-                  000100a8    00000006     rts430x_lc_rd_eabi.lib : exit.c.obj (.text:abort)
-                  000100ae    00000004                            : pre_init.c.obj (.text:_system_pre_init)
+                  0001002c    00000024     main.obj (.text:Initialize_UART)
+                  00010050    00000022     main.obj (.text:main)
+                  00010072    00000018     main.obj (.text:Toggle)
+                  0001008a    00000016     main.obj (.text:Recieve)
+                  000100a0    0000000e     main.obj (.text:Transmit)
+                  000100ae    00000006     rts430x_lc_rd_eabi.lib : exit.c.obj (.text:abort)
+                  000100b4    00000004                            : pre_init.c.obj (.text:_system_pre_init)
 
 MODULE SUMMARY
 
        Module             code   ro data   rw data
        ------             ----   -------   -------
     .\
-       main.obj           124    0         0      
+       main.obj           130    0         0      
     +--+------------------+------+---------+---------+
-       Total:             124    0         0      
+       Total:             130    0         0      
                                                   
     C:\ti\ccs920\ccs\ccs_base\msp430\lib\FR59xx\MSPMPU_INIT_LIB_CCS_msp430_large_code_restricted_data.lib
        mpu_init.o         44     0         0      
@@ -291,7 +292,7 @@ MODULE SUMMARY
                                                   
        Stack:             0      0         160    
     +--+------------------+------+---------+---------+
-       Grand Total:       210    58        160    
+       Grand Total:       216    58        160    
 
 
 GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name 
@@ -555,7 +556,7 @@ address   name
 000009ce  AESAXIN_L                 
 000004be  BCD2BIN                   
 000004bc  BIN2BCD                   
-000100a8  C$$EXIT                   
+000100ae  C$$EXIT                   
 0000043e  CAPTIO0CTL                
 0000043f  CAPTIO0CTL_H              
 0000043e  CAPTIO0CTL_L              
@@ -1029,7 +1030,7 @@ address   name
 00000146  GCCTL1                    
 00000147  GCCTL1_H                  
 00000146  GCCTL1_L                  
-00010054  Initialize_UART           
+0001002c  Initialize_UART           
 00000a40  LCDBM1                    
 00000a49  LCDBM10                   
 00000a4a  LCDBM11                   
@@ -1416,7 +1417,7 @@ address   name
 000004b6  RTCYEAR                   
 000004b7  RTCYEAR_H                 
 000004b6  RTCYEAR_L                 
-0001002c  Recieve                   
+0001008a  Recieve                   
 00000100  SFRIE1                    
 00000101  SFRIE1_H                  
 00000100  SFRIE1_L                  
@@ -1516,7 +1517,8 @@ address   name
 000003e0  TB0EX0                    
 000003ee  TB0IV                     
 000003d0  TB0R                      
-0001009a  Transmit                  
+00010072  Toggle                    
+000100a0  Transmit                  
 000005d0  UCA0ABCTL                 
 000005c6  UCA0BRW                   
 000005c7  UCA0BRW_H                 
@@ -1718,13 +1720,13 @@ ffffffff  __c_args__
 00004400  _c_int00_noinit_noargs_mpu
 0000fffe  _reset_vector             
 00002360  _stack                    
-000100ae  _system_pre_init          
-000100a8  abort                     
+000100b4  _system_pre_init          
+000100ae  abort                     
 00004400  fram_ipe_end              
 00004400  fram_ipe_start            
 00004400  fram_rw_start             
 00004400  fram_rx_start             
-00010078  main                      
+00010050  main                      
 0000a501  mpu_ctl0_value            
 00001513  mpu_sam_value             
 00000440  mpu_segment_border1       
@@ -3155,16 +3157,17 @@ address   name
 0000fffc  __TI_int54                
 0000fffe  _reset_vector             
 00010000  __mpu_init                
-0001002c  Recieve                   
-00010054  Initialize_UART           
-00010078  main                      
-0001009a  Transmit                  
-000100a8  C$$EXIT                   
-000100a8  abort                     
-000100ae  _system_pre_init          
+0001002c  Initialize_UART           
+00010050  main                      
+00010072  Toggle                    
+0001008a  Recieve                   
+000100a0  Transmit                  
+000100ae  C$$EXIT                   
+000100ae  abort                     
+000100b4  _system_pre_init          
 ffffffff  __TI_pprof_out_hndl       
 ffffffff  __TI_prof_data_size       
 ffffffff  __TI_prof_data_start      
 ffffffff  __c_args__                
 
-[1431 symbols]
+[1432 symbols]

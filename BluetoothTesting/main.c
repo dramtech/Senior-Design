@@ -10,6 +10,13 @@
 
 #define REDLED BIT0
 
+/*
+ * UART CONFIGURATION:
+ * USC1_AO
+ * TXD -> P4.2
+ * RXD -> P4.3
+ */
+
 /**
  * main.c
  */
@@ -47,8 +54,11 @@ int main(void)
 void Initialize_UART(void)
 {
     // Configure pins to UART
-    P2SEL1 &= ~(BIT0 | BIT1);
-    P2SEL0 |= (BIT0 | BIT1);
+    //P2SEL1 &= ~(BIT0 | BIT1);
+    //P2SEL0 |= (BIT0 | BIT1);
+
+    P4SEL1 &= ~(BIT2 | BIT3);
+    P4SEL0 |= (BIT2 | BIT3);
 
     UCA0CTLW0 |= UCSSEL_2;
 
