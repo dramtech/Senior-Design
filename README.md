@@ -1,4 +1,4 @@
-# Senior Deisgn Project
+# Senior Design Project
 
 This repo will contain mainly test code and design documents.
 
