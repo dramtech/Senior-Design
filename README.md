@@ -10,7 +10,7 @@ This repo will contain mainly test code and design documents.
 * TXD - P4.2
 * RXD - P4.3
 
-## Gyroscope Sensor (MPU6050) Pin Assignments
+## Gyroscope Sensor (MPU6050) Pin Assignments (I2C)
 * Vcc - 3.3v
 * GND - GND
 * SCL - P4.1
