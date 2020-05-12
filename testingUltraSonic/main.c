@@ -1,23 +1,15 @@
 /********************************************************************/
 /* Project: Ultrasonice based Distance Meter with LCD Display       */
-/* Microcontroller: MSP430G2231 on MSP-EXP430G2 Launchpad           */
+/* Microcontroller: MSP430FR6989           */
 /* Ultrasonic Ranging Module: HC-SR04                               */
 /* 16x2 LCD Display: 1602K27-00                                     */
 /********************************************************************/
-/* Build command on Linux:
-    $ msp430-gcc -mmcu=msp430g2553 -g -o msp_dist.elf msp_dist.c    */
-/********************************************************************/
-/* Board jumper changes:
-    1. Isolate LEDs connected to P1.0 and P1.6 by
-    removing Jumpers cap J5.
-    2. Isolate RX/TX connected to P1.1 and P1.2 by
-    removing those Jumper cap in J3                                 */
 /********************************************************************/
 /* uC and Ultrasonic sensor Connections
     P2.1 - Trigger
     P2.2 - Echo - This should not be changed!
-                - Why P1.1? - msp430g2231 datasheet mention this as
-                - input for Timer A0 - Compare/Capture input        */
+                - Why P2.2? - msp430fr6989 datasheet mention this as
+                - input for Timer B0 - Compare/Capture input        */
 /********************************************************************/
 /* uC and LCD Connections
     TP1 - Vcc (+5v)
@@ -55,8 +47,6 @@
 #define LCD_EN          BIT0
 #define LCD_RS          BIT1
 #define LCD_DATA        BIT2 | BIT3 | BIT6 | BIT7
-#define LCD_D0_OFFSET   4   // D0 at BIT4, so it is 4
-#define US_MASK         US_TRIG | US_ECHO
 #define LCD_MASK        LCD_EN | LCD_RS | LCD_DATA
 
 // Debug LEDs
@@ -82,8 +72,7 @@ __interrupt void TimerB0(void)
         // Formula: Distance in cm = (Time in uSec)/58
         distance_cm = (TB0CCR4 - up_counter) / 58;
     }
-    TB0CCTL4 &= ~CCIFG;
-    //TB0CTL &= ~TAIFG;           // Clear interrupt flags - handled
+    TB0CCTL4 &= ~CCIFG;          // Clear interrupt flags - handled
 }
 
 unsigned char set_data(unsigned char value)
@@ -198,20 +187,18 @@ int main()
     char distance_string[4];
 
     WDTCTL = WDTPW + WDTHOLD;       // Stop Watch Dog Timer
-    // Enable the GPIO pins
-    PM5CTL0 &= ~LOCKLPM5;
+    PM5CTL0 &= ~LOCKLPM5;           // Enable the GPIO pins
+
     UC_PORT_DIR = LCD_MASK;         // Output direction for LCD connections
     US_PORT_DIR |= US_TRIG;         // Output direction for trigger to sensor
     US_PORT_DIR &= ~US_ECHO;        // Input direction for echo from sensor
     US_PORT &= ~US_TRIG;            // keep trigger at low
-    //P2SEL = US_ECHO;                // set US_ECHO as trigger for Timer from Port-1
-    P2SEL1 |= US_ECHO;
+    P2SEL1 |= US_ECHO;              // set US_ECHO as trigger for Timer from Port-1
     P2SEL0 &= ~US_ECHO;
 
 
     P1DIR |= LED1; // Set P1.0 as output
     P1OUT &= ~LED1; // Make sure LED is off
-    //setup_SMCLK();
 
     // Initialize LCD
     lcd_init();
@@ -233,7 +220,7 @@ int main()
         //__delay_cycles(60000);            // 60ms measurement cycle
         __delay_cycles(500000);             // 0.5sec measurement cycle
         P1OUT ^= LED1;
-        //distance_cm = TB0CCR4;
+
         // displaying the current distance
         //itoa(distance_cm, distance_string, 10);
         sprintf(distance_string, "%d", distance_cm);

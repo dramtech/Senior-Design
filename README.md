@@ -9,3 +9,10 @@ This repo will contain mainly test code and design documents.
 ## Bluetooth Module (HC 05) Pin Assignments (UART)
 * TXD - P4.2
 * RXD - P4.3
+
+## Gyroscope Sensor (MPU6050) Pin Assignments
+* Vcc - 3.3v
+* GND - GND
+* SCL - P4.1
+* SDA - P4.0
+* AD0 - GND

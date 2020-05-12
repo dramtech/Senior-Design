@@ -1,7 +1,7 @@
 ******************************************************************************
                   MSP430 Linker Unix v20.2.0                   
 ******************************************************************************
->> Linked Thu Apr 16 14:24:47 2020
+>> Linked Thu Apr 16 14:44:28 2020
 
 OUTPUT FILE NAME:   <testingUltraSonic.out>
 ENTRY POINT SYMBOL: "_c_int00_noargs_mpu"  address: 0000442c
