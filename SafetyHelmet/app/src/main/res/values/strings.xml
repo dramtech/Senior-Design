@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Safety Helmet</string>
+    <string name="device_status_title">Device Status:</string>
+    <string name="device_status_connected">Connected</string>
+    <string name="device_status_not_connected">Not Connected</string>
+    <string name="temperature_title">Temperature:</string>
+    <string name="temperature_not_connected">None</string>
+    <string name="emergency_cont_title">Emergency Contact:</string>
+    <string name="emergency_cont_not_set">Not Set</string>
+    <string name="warning_emergency_cont">Please add emergency contact.</string>
+    <string name="warning_connect_device">Please connect Safety Helmet system via Bluetooth.</string>
+    <string name="set_emergency_cont_button">Set Emergency Contact</string>
+    <string name="configuration_button">Configuration</string>
+    <string name="config_toolbar_title">Configuration</string>
+    <string name="navigation_btn">Navigation</string>
+    <string name="nav_toolbar_title">Navigation</string>
+    <string name="temperature_units_title">Temperature units</string>
+</resources>

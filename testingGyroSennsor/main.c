@@ -1,11 +1,12 @@
 #include <msp430.h>
 #include <stdio.h>
+#include <math.h>
 
 /*
- * Test code for Gyro sensor
+ * Test code for MPU6050
  * I2C used to communicate with sensor
  * UART used to transmit data to PC terminal.
- * Raw data not processed
+ * Computing angle of inclination using the accelerometer
  *
  * Pin assignment for MPU6050 -> MSP430FR6989:
  * Vcc - 3.3v
@@ -22,7 +23,11 @@
 #define RXBUFFER UCA1RXBUF // Receive buffer
 #define redLED BIT0 // Red LED at P1.0
 #define greenLED BIT7 // Green LED at P9.7
-#define GYRO_ADDRESS 0x68
+
+#define GYRO_ADDRESS 0x68 // MPU6050 I2C address
+#define g_VALUE 16384.0 // 1g = 16384 from datasheet
+
+#define PI 3.14159265
 
 // Configure UART to the popular configuration
 // 4800 baud, 8-bit data, LSB first, no parity bits, 1 stop bit
@@ -272,7 +277,7 @@ void uart_write_uint16(unsigned int n){
     }
 }
 
-// Returning hex number as a string
+// Returning 4 digit hex number as a string
 char * decimalToHex(unsigned int data){
 
     // Digit use to isolate each digit
@@ -315,7 +320,7 @@ void config_ACLK_to_32KHz_crystal() {
 
 // Function that initialize gyro sensor, must be called after Initialize_I2C
 void Initialize_Gyro() {
-    // Setting Full Scale Range = +- 250
+    // Setting gyro Full Scale Range = +- 250
     unsigned char gyroReg = 0;
     int flag = 0;
     flag = i2c_read_word_single(GYRO_ADDRESS, 0x1B, &gyroReg); // Reading gyro conf register
@@ -387,18 +392,29 @@ int main(void){
 
     char result[150];
     char tempRes[20]; // String for temperature
+    char inc_angle[10];
+
+    // Vector values
+    float vecX = 0, vecY = 0, vecZ = 0;
+
+    // Vector magnitude
+    float m = 0;
+
+    // Angle of inclination;
+    float angle = 0;
+
     for(;;){
-        char * title = "\nGyro Sensor testing\n";
+        char * title = "\nSensors testing\n";
 
         // Reading temperature
         i2c_read_word(GYRO_ADDRESS, 0x41, &value);
         temp = (short)value;
         // Reading x axis value
-        i2c_read_word(GYRO_ADDRESS, 0x43, &x);
+        i2c_read_word(GYRO_ADDRESS, 0x3B, &x);
         // Reading y axis value
-        i2c_read_word(GYRO_ADDRESS, 0x45, &y);
+        i2c_read_word(GYRO_ADDRESS, 0x3D, &y);
         // Reading z axis value
-        i2c_read_word(GYRO_ADDRESS, 0x47, &z);
+        i2c_read_word(GYRO_ADDRESS, 0x3F, &z);
 
         temperature = ((temp / 340.0) + 36.53);
         floatToString(temperature, tempRes);
@@ -407,7 +423,20 @@ int main(void){
         rY = (short)y;
         rZ = (short)z;
 
-        sprintf(result, "Results from gyro sensor\nx = %d, y = %d, z = %d\nTemperature in C: %s", rX, rY, rZ, tempRes);
+        // Normalize vector g force vector
+        vecX = rX / g_VALUE;
+        vecY = rY / g_VALUE;
+        vecZ = rZ / g_VALUE;
+
+        // Compute vector magnitude
+        m = sqrt((vecX * vecX) + (vecY * vecY) + (vecZ * vecZ));
+
+        // Compute angle of inclination relative to z axis
+        angle = acos(vecZ / m) * (180.0 / PI);
+        floatToString(angle, inc_angle);
+
+//        sprintf(result, "Results from Accel' sensor\nx = %d, y = %d, z = %d\nTemperature in C: %s", vecX, vecY, vecZ, tempRes);
+        sprintf(result, "Angle of inclination in degrees: %s\nTemperature in C: %s", inc_angle, tempRes);
 
         // Transmitting data through UART
         uart_write_string(title);
