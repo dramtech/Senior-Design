@@ -15,4 +15,5 @@
     <string name="navigation_btn">Navigation</string>
     <string name="nav_toolbar_title">Navigation</string>
     <string name="temperature_units_title">Temperature units</string>
+    <string name="bluetooth_config_title">Bluetooth</string>
 </resources>

@@ -42,12 +42,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.setEmergContBtn:
-                // TODO implement emergency contact form
                 Toast.makeText(this,"emerg clicked",Toast.LENGTH_SHORT).show();
                     loadEmergContForm();
                 break;
             case R.id.setConfigBtn:
-                // TODO implement configuration screen
                 Toast.makeText(this,"config clicked",Toast.LENGTH_SHORT).show();
                 loadConfig();
                 break;

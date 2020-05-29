@@ -16,6 +16,9 @@ public class ActivityConfig extends AppCompatActivity {
     private Switch tempSwitch;
     private String tempUnit = "F";
 
+    private Switch bluetoothSwitch;
+    private String blueOnState = "OFF";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,11 +34,34 @@ public class ActivityConfig extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    tempSwitch.setText("C");
                     setTempUnit("C");
+                    tempSwitch.setText(getTempUnit());
+                    // TODO convert temperature to C and update temperature value
                 } else {
-                    tempSwitch.setText("F");
                     setTempUnit("F");
+                    tempSwitch.setText(getTempUnit());
+                    // TODO convert temperature to F and update temperature value
+                }
+            }
+        });
+
+        bluetoothSwitch = (Switch) findViewById(R.id.bluetoothOnSwitch);
+        bluetoothSwitch.setText(blueOnState);
+
+        //TODO set Bluetooth switch to ON if already paired and connected
+        bluetoothSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    setBlueOnState("ON");
+                    bluetoothSwitch.setText(getBlueOnState());
+                    //TODO implement bluetooth pairing procedure and update bluetoothConfigState to connected and set color to colorDeviceStatConnected
+                    //TODO ask Bluetooth permissions
+                    //TODO implement if( BluetoothIsNotConnected ) --> set switch to off
+                } else {
+                    setBlueOnState("OFF");
+                    bluetoothSwitch.setText(getBlueOnState());
+                    //TODO disconnect bluetooth here (after bluetooth is implemented)
                 }
             }
         });
@@ -49,4 +75,11 @@ public class ActivityConfig extends AppCompatActivity {
         return tempUnit;
     }
 
+    public void setBlueOnState(String state) {
+        blueOnState = state;
+    }
+
+    public String getBlueOnState() {
+        return blueOnState;
+    }
 }
