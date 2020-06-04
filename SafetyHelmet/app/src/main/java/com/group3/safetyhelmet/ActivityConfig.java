@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 
 
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
@@ -18,6 +19,11 @@ public class ActivityConfig extends AppCompatActivity {
 
     private Switch bluetoothSwitch;
     private String blueOnState = "OFF";
+
+    // TODO set up functionality for these buttons
+    private Button selectBtn;
+    private Button editBtn;
+    private Button saveBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

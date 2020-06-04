@@ -10,6 +10,14 @@
     <string name="warning_emergency_cont">Please add emergency contact.</string>
     <string name="warning_connect_device">Please connect Safety Helmet system via Bluetooth.</string>
     <string name="set_emergency_cont_button">Set Emergency Contact</string>
+    <string name="set_emerg_cont_form_title">Set emergency contact</string>
+    <string name="select_contact">Select</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="phone_number">Phone number</string>
+    <string name="message">Message</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
     <string name="configuration_button">Configuration</string>
     <string name="config_toolbar_title">Configuration</string>
     <string name="navigation_btn">Navigation</string>

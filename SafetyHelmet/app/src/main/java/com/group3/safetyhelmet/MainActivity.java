@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button setEmergContBtn;
+//    private Button setEmergContBtn;
     private Button setConfigBtn;
     private Button navBtn;
 
@@ -28,8 +28,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // App theme always in night mode
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
-        setEmergContBtn = findViewById(R.id.setEmergContBtn);
-        setEmergContBtn.setOnClickListener(this);
+//        setEmergContBtn = findViewById(R.id.setEmergContBtn);
+//        setEmergContBtn.setOnClickListener(this);
         setConfigBtn = findViewById(R.id.setConfigBtn);
         setConfigBtn.setOnClickListener(this);
         navBtn = findViewById(R.id.navBtn);
@@ -41,10 +41,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.setEmergContBtn:
-                Toast.makeText(this,"emerg clicked",Toast.LENGTH_SHORT).show();
-                    loadEmergContForm();
-                break;
+//            case R.id.setEmergContBtn:
+//                Toast.makeText(this,"emerg clicked",Toast.LENGTH_SHORT).show();
+//                    loadEmergContForm();
+//                break;
             case R.id.setConfigBtn:
                 Toast.makeText(this,"config clicked",Toast.LENGTH_SHORT).show();
                 loadConfig();

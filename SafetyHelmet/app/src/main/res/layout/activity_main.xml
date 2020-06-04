@@ -209,18 +209,6 @@
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/setEmergContBtn"
-        android:layout_width="150dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/button_background"
-        android:elevation="8dp"
-        android:text="@string/set_emergency_cont_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/warningMessageCard" />
-
-    <com.google.android.material.button.MaterialButton
         android:id="@+id/setConfigBtn"
         android:layout_width="150dp"
         android:layout_height="60dp"
@@ -234,13 +222,13 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/navBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/button_background"
         android:elevation="8dp"
         android:text="@string/navigation_btn"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/warningMessageCard" />
 
