@@ -21,10 +21,10 @@ Using the accelerometer the angle of inclination is now calculated.
 * AD0 - GND
 
 ## Android Application
-Android application is in early stages of development
+Android application is in early stages of development.
 
 ## OLED Display Testing code
-Using grlib library from TI driver is using I2C
+Using grlib library from TI, driver is using I2C.
 
 ### Pin Assignments (I2C)
 * Vcc - 3.3v
