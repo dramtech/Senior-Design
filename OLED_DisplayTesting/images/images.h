@@ -35,6 +35,8 @@
 //
 //*****************************************************************************
 
+#include "grlib/grlib.h"
+
 #ifndef __IMAGES_H__
 #define __IMAGES_H__
 
@@ -43,5 +45,7 @@
 // Prototypes for the image arrays.
 //
 //*****************************************************************************
+
+extern const tImage  safetyHelmetWelcome1BPP_UNCOMP;
 
 #endif // __IMAGES_H__

@@ -93,16 +93,19 @@
    displays. This allows you to update pixels while reading the neighboring pixels
    from the buffer instead of a read from the LCD controller. A buffer is not required
    as a read followed by a write can be used instead.*/
+
+// Store buffer in FRAM
+#pragma NOINIT(SSD1306_Memory)
 uint8_t SSD1306_Memory[(LCD_X_SIZE * LCD_Y_SIZE * BPP + 7) / 8];
-//uint8_t SSD1306_Memory[1024];
+
 //*****************************************************************************
 //
 // Suggested functions to help facilitate writing the required functions below
 //
 //*****************************************************************************
 // defines for i2c
-#define RXFLAG UCRXIFG // Receive flag
-#define TXFLAG UCTXIFG // Transmit flag
+//#define RXFLAG UCRXIFG // Receive flag
+//#define TXFLAG UCTXIFG // Transmit flag
 #define OLED_ADDR 0x78 // OLED i2c address
 
 static void Initialize_I2C(void) {
@@ -370,6 +373,7 @@ SSD1306_DriverPixelDraw(void *pvDisplayData,
 
     unsigned int index = ((lY / 8 ) * LCD_X_SIZE ) + (lX * BPP);
 
+    // Display has only one color value
     if(ulValue == 0)
         SSD1306_Memory[index] &= ~pixel_byte;
     else
@@ -377,7 +381,6 @@ SSD1306_DriverPixelDraw(void *pvDisplayData,
 
     pixel_byte = SSD1306_Memory[index];
 
-    // Display has only one color
     SetAddress(MAPPED_X(lX, lY), MAPPED_X(LCD_X_SIZE - 1, lY), MAPPED_Y(lX, lY));
 
     WriteData(pixel_byte);
@@ -574,12 +577,9 @@ SSD1306_DriverLineDrawH(void *pvDisplayData,
     uint8_t pixel_byte, y_bit_offset;
     unsigned int index = 0;
 
-    // Converting X and Y coordinates in memory buffer
+    // Converting Y coordinate in memory buffer
 
-    pixel_byte = 0x01 << (lY % 8);
     y_bit_offset = 0x01 << (lY % 8);
-
-    // Display has only one color
 
     SetAddress(MAPPED_X(lX1, lY), MAPPED_X(lX2, lY), MAPPED_Y(lX1, lY));
 
@@ -588,11 +588,12 @@ SSD1306_DriverLineDrawH(void *pvDisplayData,
 //        SSD1306_DriverPixelDraw(pvDisplayData, lX1, lY, ulValue);
 
         if(lY < 64)
-            index = ((lY / 8 ) * LCD_X_SIZE ) + (lX1 * BPP);
+            index = ((lY / 8 ) * LCD_X_SIZE ) + lX1;
         else
             return;
 
         // Update buffer
+        // Display has only one color
         if(ulValue == 0)
             SSD1306_Memory[index] &= ~y_bit_offset;
         else
