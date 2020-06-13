@@ -26,6 +26,7 @@
 
 #define GYRO_ADDRESS 0x68 // MPU6050 I2C address
 #define g_VALUE 16384.0 // 1g = 16384 from datasheet
+#define DEVICE_RESET 0x80
 
 #define PI 3.14159265
 
@@ -69,6 +70,21 @@ void Initialize_I2C(void) {
 
     // Exit the reset mode
     UCB1CTLW0 &= ~UCSWRST;
+}
+
+void config_MCLK_to_16MHz_DCO() {
+    // Configure one FRAM waitstate as required by the device datasheet for MCLK
+    // operation beyond 8MHz _before_ configuring the clock system.
+    FRCTL0 = FRCTLPW | NWAITS_1;
+
+    // Clock System Setup
+    CSCTL0_H = CSKEY >> 8;                    // Unlock CS registers
+    CSCTL1 = DCOFSEL_4 | DCORSEL;            // Set DCO to 16MHz
+
+    // Set SMCLK = MCLK = DCO, ACLK = LFXCLK = 32KHz crystal
+    CSCTL2 = SELA__LFXTCLK | SELS__DCOCLK | SELM__DCOCLK;
+    CSCTL3 = DIVA__1 | DIVS__2 | DIVM__1;     // Set all dividers
+    CSCTL0_H = 0;   // Lock CS registers
 }
 
 // The function transmit a byte over UART
@@ -320,6 +336,17 @@ void config_ACLK_to_32KHz_crystal() {
 
 // Function that initialize gyro sensor, must be called after Initialize_I2C
 void Initialize_Gyro() {
+
+    // Reset device
+    unsigned char test = 1;
+    i2c_write_word_single(GYRO_ADDRESS, 0x6B, DEVICE_RESET);
+    // Wait for reset to complete
+    __delay_cycles(1000000);
+    while(test != 0) {
+        i2c_read_word_single(GYRO_ADDRESS, 0x6B, &test);
+        test &= 0x80;
+    }
+
     // Setting gyro Full Scale Range = +- 250
     unsigned char gyroReg = 0;
     int flag = 0;
@@ -370,6 +397,8 @@ int main(void){
     P3SEL1 &= ~(BIT4|BIT5);
     P3SEL0 |= (BIT4|BIT5);
 
+
+
     // Setting the ACLK clock to 32kHz crystal
     config_ACLK_to_32KHz_crystal();
 
@@ -381,6 +410,8 @@ int main(void){
 
     // Initialize Gyro sensor
     Initialize_Gyro();
+
+    config_MCLK_to_16MHz_DCO();
 
     unsigned long int i;
     unsigned int value;
@@ -404,7 +435,7 @@ int main(void){
     float angle = 0;
 
     for(;;){
-        char * title = "\nSensors testing\n";
+        char * title = "\nSensors testing\n\r";
 
         // Reading temperature
         i2c_read_word(GYRO_ADDRESS, 0x41, &value);
@@ -436,7 +467,7 @@ int main(void){
         floatToString(angle, inc_angle);
 
 //        sprintf(result, "Results from Accel' sensor\nx = %d, y = %d, z = %d\nTemperature in C: %s", vecX, vecY, vecZ, tempRes);
-        sprintf(result, "Angle of inclination in degrees: %s\nTemperature in C: %s", inc_angle, tempRes);
+        sprintf(result, "Angle of inclination in degrees: %s\n\rTemperature in C: %s\r", inc_angle, tempRes);
 
         // Transmitting data through UART
         uart_write_string(title);

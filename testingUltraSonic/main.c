@@ -52,8 +52,8 @@
 // Debug LEDs
 #define LED1 BIT0
 
-unsigned int up_counter;
-unsigned int distance_cm;
+static unsigned int up_counter;
+static unsigned int distance_cm;
 
 /* Timer B0 Capture Interrupt routine
  P2.2 (echo) causes this routine to be called */
