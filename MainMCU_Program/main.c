@@ -129,7 +129,9 @@ int main(void)
                             OFF,   // Brightness
                             ON};   //Gyro/Acc
 
-    unsigned int distance_cm = 0;
+    unsigned int distance_cm[2];
+    distance_cm[0] = 0;
+    distance_cm[1] = 0;
     int temp = 0;
     float angle = 0;
     char distance_str[10];
@@ -235,9 +237,9 @@ int main(void)
         if(procedure[1]) {
             if(measure_dis) {
                 measure_dis = 0;
-                getDistance(&distance_cm);
+                getDistance(distance_cm);
                 rect2.xMax = Graphics_getStringWidth(&g_sContext, distance_str, -1);
-                sprintf(distance_str, "%d", distance_cm);
+                sprintf(distance_str, "%d  %d", distance_cm[0], distance_cm[1]);
                 Graphics_setForegroundColor(&g_sContext, ClrBlack);
                 Graphics_fillRectangle(&g_sContext, &rect2);
                 Graphics_setForegroundColor(&g_sContext, ClrWhite);
@@ -245,7 +247,7 @@ int main(void)
             }
 
             // Right car warning
-            if(distance_cm < 220) {
+            if(distance_cm[0] < 220) {
                 if(flag == 1) {
                     flag = 0;
                     Graphics_setForegroundColor(&g_sContext, ClrWhite);
@@ -295,20 +297,20 @@ int main(void)
             if(angle_flag == 2) {
                 angle_flag = 0;
                 getAngle(&angle);
-                floatToString(angle, angle_str);
-
-                // Print to the screen for debugging
-                Graphics_setForegroundColor(&g_sContext, ClrBlack);
-                Graphics_fillRectangle(&g_sContext, &angle_rect);
-                Graphics_setForegroundColor(&g_sContext, ClrWhite);
-                angle_rect.xMax = Graphics_getStringWidth(&g_sContext, "Angle: ", -1)
-                                  + Graphics_getStringWidth(&g_sContext, angle_str, -1);
-
-                Graphics_drawString(&g_sContext,
-                                    angle_str, strlen(angle_str),
-                                    Graphics_getStringWidth(&g_sContext, "Angle: ", -1),
-                                    TEMP_TEXT_POS_yMIN - 15,
-                                    GRAPHICS_TRANSPARENT_TEXT);
+//                floatToString(angle, angle_str);
+//
+//                // Print to the screen for debugging
+//                Graphics_setForegroundColor(&g_sContext, ClrBlack);
+//                Graphics_fillRectangle(&g_sContext, &angle_rect);
+//                Graphics_setForegroundColor(&g_sContext, ClrWhite);
+//                angle_rect.xMax = Graphics_getStringWidth(&g_sContext, "Angle: ", -1)
+//                                  + Graphics_getStringWidth(&g_sContext, angle_str, -1);
+//
+//                Graphics_drawString(&g_sContext,
+//                                    angle_str, strlen(angle_str),
+//                                    Graphics_getStringWidth(&g_sContext, "Angle: ", -1),
+//                                    TEMP_TEXT_POS_yMIN - 15,
+//                                    GRAPHICS_TRANSPARENT_TEXT);
 
             }
         }
