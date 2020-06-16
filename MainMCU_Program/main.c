@@ -57,6 +57,7 @@ uint8_t flag = 0;
 uint8_t measure_dis = 0;
 uint8_t temp_flag = 20;
 uint8_t angle_flag = 0;
+uint8_t bluetooth_conn_flag = 0;
 
 #if defined(__IAR_SYSTEMS_ICC__)
 int16_t __low_level_init(void) {
@@ -124,10 +125,10 @@ int main(void)
 
     Graphics_Context g_sContext;
 
-    uint8_t procedure[4] = {OFF,    // Bluetooth
-                            ON,   // Ultrasonic
+    uint8_t procedure[4] = {ON,    // Bluetooth
+                            OFF,   // Ultrasonic
                             OFF,   // Brightness
-                            ON};   //Gyro/Acc
+                            OFF};   //Gyro/Acc
 
     unsigned int distance_cm[2];
     distance_cm[0] = 0;
@@ -137,7 +138,8 @@ int main(void)
     char distance_str[10];
     char temp_str[4] = "0";
     char angle_str[5] = "90.0";
-
+    unsigned char c = 'A';
+    int bluetooth_pair_flag = 0;
 
 
     // Set up the LCD also initialize I2C
@@ -214,7 +216,7 @@ int main(void)
     angle_rect.yMax = TEMP_TEXT_POS_yMIN - 15 + Graphics_getStringHeight(&g_sContext);
 
     init_timer();
-
+    init_bluetooth();
 
     _enable_interrupts();
 
@@ -232,6 +234,18 @@ int main(void)
 
             // Temperature value is stored in temp variable (signed int)
             // as celsius unites
+
+            if (!bluetooth_pair_flag) {
+                unsigned char retval = '0';
+                retval = receive_data();
+
+                if (retval == c) {
+                    procedure[1] = ON; // Ultrasonic
+                    procedure[3] = ON; //Gyro/Acc
+
+                    bluetooth_pair_flag = 1; // Set bluetooth pair ON.
+                }
+            }
         }
         // Ultrasonic procedure
         if(procedure[1]) {
@@ -279,7 +293,11 @@ int main(void)
             if(temp_flag == 20) {
                 temp_flag = 0;
                 getTemp(&temp);
+
                 sprintf(temp_str, "%d", temp);
+
+                transmit_data(temp_str); // Send temp data through bluetooth.
+
                 Graphics_setForegroundColor(&g_sContext, ClrBlack);
                 Graphics_fillRectangle(&g_sContext, &temp_del);
                 Graphics_setForegroundColor(&g_sContext, ClrWhite);
