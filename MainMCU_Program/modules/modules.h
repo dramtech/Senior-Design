@@ -35,9 +35,10 @@ extern void getAngle(float * value);
 extern void Initialize_Gyro();
 
 //////////////////////////////////////////////
-// Bluetooth ////////////////////////
+// Bluetooth /////////////////////////////////
 //////////////////////////////////////////////
-
-
+extern void init_bluetooth();
+extern void transmit_data(unsigned char *c);
+extern unsigned char receive_data();
 
 #endif

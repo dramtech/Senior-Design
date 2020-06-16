@@ -4,7 +4,7 @@
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROGRAM.MSP430FR6989.ccxml.TI MSP430 USB1/MSP430" value="${build_artifact:MainMCU_Program}"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROJECT.MSP430FR6989.ccxml.TI MSP430 USB1/MSP430" value="MainMCU_Program"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_TARGET_CONFIG" value="${target_config_active_default:MainMCU_Program}"/>
-<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.MSP430FR6989.ccxml.TI MSP430 USB1/MSP430" value="/home/daniel/workspace_v10/Senior-Design/MainMCU_Program/Debug/MainMCU_Program.out"/>
+<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.MSP430FR6989.ccxml.TI MSP430 USB1/MSP430" value="C:\Users\mgmcc\Downloads\Senior-Design-master (3)\Senior-Design-master\MainMCU_Program\Debug\MainMCU_Program.out"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/MainMCU_Program"/>
 </listAttribute>
