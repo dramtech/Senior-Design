@@ -54,7 +54,7 @@ __interrupt void TimerB0(void)
 
     }
     TB0CCTL4 &= ~CCIFG;          // Clear interrupt flags - handled
-    TB0CCTL5 &= ~CCIFG;          // Clear interrupt flags - handled
+    TB0CCTL5 &= ~CCIFG;
 }
 
 static void timer_init()
@@ -103,9 +103,9 @@ void getDistance(unsigned int * data) {
 
     // measuring the distance
     P3OUT |= BIT0 | BIT1;                // assert both RIGHT and LEFT
-    __delay_cycles(160);                 // 10us wide on 16MHz clock
+    __delay_cycles(320);                 // 10us wide on 16MHz clock
     P3OUT  &= ~(BIT0 | BIT1);            // deassert
-    __delay_cycles(1120000);             // 70ms with 16MHz clock measurement cycle
+    __delay_cycles(960000);             // 70ms with 16MHz clock measurement cycle
 //    __delay_cycles(500000);            // 0.5sec measurement cycle
 
     // Disable timer interrupt

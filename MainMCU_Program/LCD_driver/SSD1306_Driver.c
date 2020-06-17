@@ -109,7 +109,7 @@ uint8_t SSD1306_Memory[(LCD_X_SIZE * LCD_Y_SIZE * BPP + 7) / 8];
 #define OLED_ADDR 0x78 // OLED i2c address
 
 static void Initialize_I2C(void) {
-    _disable_interrupts();
+//    _disable_interrupts();
 
     // Enter reset state before the configuration starts...
     UCB1CTLW0 |= UCSWRST;
@@ -132,11 +132,11 @@ static void Initialize_I2C(void) {
     // Exit the reset mode
     UCB1CTLW0 &= ~UCSWRST;
 
-    _enable_interrupts();
+//    _enable_interrupts();
 }
 
 int i2c_write_byte(unsigned char i2c_address, unsigned char * data) {
-    _disable_interrupts();
+//    _disable_interrupts();
 
     UCB1I2CSA = i2c_address >> 1; // Set I2C address
 
@@ -161,14 +161,14 @@ int i2c_write_byte(unsigned char i2c_address, unsigned char * data) {
     UCB1CTLW0 |= UCTXSTP; // Set stop bit
     while ( (UCB1CTLW0 & UCTXSTP) != 0) {}
 
-    _enable_interrupts();
+//    _enable_interrupts();
 
     return 0;
 }
 
 // Writing commands only
 int i2c_write_array(unsigned char i2c_address, unsigned char * data, unsigned int dataSize) {
-    _disable_interrupts();
+//    _disable_interrupts();
     int i = 0;
 
     unsigned char data_pocket[2];
@@ -216,7 +216,7 @@ int i2c_write_array(unsigned char i2c_address, unsigned char * data, unsigned in
     UCB1CTLW0 |= UCTXSTP; // Set stop signal
     while ( (UCB1CTLW0 & UCTXSTP) != 0) {}
 
-    _enable_interrupts();
+//    _enable_interrupts();
 
     return 0;
 }

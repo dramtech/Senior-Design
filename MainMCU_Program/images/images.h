@@ -49,5 +49,6 @@
 extern const tImage  safetyHelmetWelcome1BPP_UNCOMP;
 extern const tImage  rightCarIndicator1BPP_COMP_RLE4;
 extern const tImage  leftCarIndicator1BPP_COMP_RLE4;
+extern const tImage  road1BPP_COMP_RLE4;
 
 #endif // __IMAGES_H__
