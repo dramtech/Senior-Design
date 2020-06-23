@@ -212,24 +212,30 @@
         android:id="@+id/setConfigBtn"
         android:layout_width="150dp"
         android:layout_height="60dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/button_background"
         android:elevation="8dp"
-        android:text="@string/configuration_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/warningMessageCard" />
+        android:text="@string/settings_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/setEmergContBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/warningMessageCard"
+        app:layout_constraintVertical_bias="0.258" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/navBtn"
+        android:id="@+id/setEmergContBtn"
         android:layout_width="150dp"
         android:layout_height="60dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="50dp"
         android:background="@drawable/button_background"
         android:elevation="8dp"
-        android:text="@string/navigation_btn"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/warningMessageCard" />
+        android:text="@string/emergency_cont_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/setConfigBtn"
+        app:layout_constraintTop_toBottomOf="@+id/warningMessageCard"
+        app:layout_constraintVertical_bias="0.258" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
