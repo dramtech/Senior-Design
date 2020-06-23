@@ -17,6 +17,6 @@ public class ActivityNav extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // TODO add navigation functionality to this activity
-        // set elevation of cards to 4dp in xml layoyt
+        // set elevation of cards to 4dp in xml layout
     }
 }

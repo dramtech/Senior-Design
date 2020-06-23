@@ -5,12 +5,12 @@
     <string name="device_status_not_connected">Not Connected</string>
     <string name="temperature_title">Temperature:</string>
     <string name="temperature_not_connected">None</string>
-    <string name="emergency_cont_title">Emergency Contact:</string>
+    <string name="emergency_cont_title">Emergency Contact</string>
     <string name="emergency_cont_not_set">Not Set</string>
     <string name="warning_emergency_cont">Please add emergency contact.</string>
     <string name="warning_connect_device">Please connect Safety Helmet system via Bluetooth.</string>
-    <string name="set_emergency_cont_button">Set Emergency Contact</string>
-    <string name="set_emerg_cont_form_title">Set emergency contact</string>
+    <string name="emergency_cont_button">Emergency Contact</string>
+    <string name="emerg_cont_form_title">Add emergency contact</string>
     <string name="select_contact">Select</string>
     <string name="first_name">First name</string>
     <string name="last_name">Last name</string>
@@ -18,10 +18,21 @@
     <string name="message">Message</string>
     <string name="edit">Edit</string>
     <string name="save">Save</string>
-    <string name="configuration_button">Configuration</string>
+    <string name="settings_button">Settings</string>
     <string name="config_toolbar_title">Configuration</string>
     <string name="navigation_btn">Navigation</string>
     <string name="nav_toolbar_title">Navigation</string>
     <string name="temperature_units_title">Temperature units</string>
     <string name="bluetooth_config_title">Bluetooth</string>
+    <string name="toast_bluetooth_disabled">Bluetooth Disabled</string>
+    <string name="title_activity_emergency_contact">EmergencyContact</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="toast_contact_added">Contact Added</string>
 </resources>
