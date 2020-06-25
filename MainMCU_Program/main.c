@@ -137,10 +137,10 @@ int main(void)
 
     Graphics_Context g_sContext;
 
-    uint8_t procedure[4] = {OFF,    // Bluetooth
-                            ON,   // Ultrasonic
+    uint8_t procedure[4] = {ON,    // Bluetooth
+                            OFF,   // Ultrasonic
                             OFF,   // Brightness
-                            ON};   //Gyro/Acc
+                            OFF};   //Gyro/Acc
 
     unsigned int distance_cm[2];
     distance_cm[0] = 0;
