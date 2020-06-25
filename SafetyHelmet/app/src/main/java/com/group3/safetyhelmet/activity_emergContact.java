@@ -1,9 +1,12 @@
 package com.group3.safetyhelmet;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +15,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 public class activity_emergContact extends AppCompatActivity {
     private static final String TAG = "activityContact";
@@ -22,6 +27,13 @@ public class activity_emergContact extends AppCompatActivity {
     private Button saveBtn;
     private SharedPreferences sp;
     private Storage storage;
+
+    // Emergency Contact Test:
+    private Button emergencyBtn;
+    final int SEND_SMS_PERMISSION_REQUEST_CODE = 1;
+
+    private static String phoneNum = "9549078034";
+    private static String message = "Hello, this is a test.";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +53,12 @@ public class activity_emergContact extends AppCompatActivity {
         contactLastName = (EditText) findViewById(R.id.emergContLastName);
         contactPhoneNum = (EditText) findViewById(R.id.emergContNumber);
         saveBtn = (Button) findViewById(R.id.saveButton);
+
+        emergencyBtn = (Button) findViewById(R.id.signalEmerg);
+        if (!checkPermission(Manifest.permission.SEND_SMS)) {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.SEND_SMS},
+                                                SEND_SMS_PERMISSION_REQUEST_CODE);
+        }
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -66,7 +84,7 @@ public class activity_emergContact extends AppCompatActivity {
                 Toast toast = Toast.makeText(getApplicationContext(), R.string.toast_contact_added, Toast.LENGTH_SHORT);
                 toast.show();
 
-                // Clear form.
+                // Clear input form.
                 contactFirstName.setText("");
                 contactLastName.setText("");
                 contactPhoneNum.setText("");
@@ -76,5 +94,23 @@ public class activity_emergContact extends AppCompatActivity {
                 Log.d(TAG, storage.getValue("ContactPhoneNum1"));
             }
         });
+
+        // SMS emergency message test.
+        emergencyBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (checkPermission(Manifest.permission.SEND_SMS)) {
+                    Log.d(TAG, "Sending SMS...");
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage(phoneNum, null, message,
+                                                null, null);
+                }
+            }
+        });
     }
+
+    public boolean checkPermission(String permission) {
+        int check = ContextCompat.checkSelfPermission(this, permission);
+        return (check == PackageManager.PERMISSION_GRANTED);
+    }
+
 }
