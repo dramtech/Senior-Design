@@ -64,6 +64,7 @@ uint8_t togg = 0;
 uint8_t flag_L = 0;
 uint8_t flag_R = 0;
 uint8_t measure_dis = 0;
+uint8_t temp_unit_flag = 0;
 uint8_t temp_flag = 20;
 uint8_t angle_flag = 0;
 uint8_t bluetooth_conn_flag = 0;
@@ -122,6 +123,7 @@ __interrupt void T0A0_ISR() {
         temp_flag++;
         angle_flag++;
         measure_dis = 1;
+        temp_unit_flag = 1;
     }
 
     if (angle_threshold_flag) {
@@ -153,11 +155,12 @@ int main(void)
     int temp = 0;
     float angle = 0;
     char distance_str[10];
-    char temp_str[4] = "0";
+    char temp_str[7] = "0";
     char angle_str[5] = "90.0";
     unsigned char c = 'A';
     int bluetooth_pair_flag = 0;
-
+    const char *signal = "sSS"; // emergency signal value.
+    char tempUnit = 'F';
 
     // Set up the LCD also initialize I2C
     SSD1306_DriverInit();
@@ -279,6 +282,16 @@ int main(void)
                     _enable_interrupts();
                 }
             }
+
+            if (temp_unit_flag) {
+              temp_unit_flag = 0;
+              unsigned char value = receive_data();
+              char unit = (char) value;
+
+              if (unit == 'C' || unit == 'F') {
+                  tempUnit = unit;
+              }
+            }
         }
         // Ultrasonic procedure
         if(procedure[1]) {
@@ -345,20 +358,28 @@ int main(void)
             // Retrieve temperature data (every 10 seconds)
             if(temp_flag == 20) {
                 temp_flag = 0;
+
                 getTemp(&temp);
 
-                sprintf(temp_str, "%d", temp);
+                // Temp conversion.
+                if (tempUnit == 'F') {
+                    temp = temp * 2 + 32;
+                }
 
-                transmit_data(temp_str); // Send temp data through bluetooth.
+                sprintf(temp_str, "t%d", temp);
+
+                transmit_data(temp_str); // Send temp data through bluetooth with temp header.
+
+                sprintf(temp_str, "%s %c", temp_str, tempUnit);
 
                 Graphics_setForegroundColor(&g_sContext, ClrBlack);
                 Graphics_fillRectangle(&g_sContext, &temp_del);
                 Graphics_setForegroundColor(&g_sContext, ClrWhite);
                 temp_del.xMax = Graphics_getStringWidth(&g_sContext, "Temperature: ", -1)
-                                + Graphics_getStringWidth(&g_sContext, temp_str, -1);
+                                + Graphics_getStringWidth(&g_sContext, temp_str + 1, -1);
 
                 Graphics_drawString(&g_sContext,
-                                    temp_str, strlen(temp_str),
+                                    temp_str + 1, strlen(temp_str),
                                     Graphics_getStringWidth(&g_sContext, "Temperature: ", -1),
                                     TEMP_TEXT_POS_yMIN,
                                     GRAPHICS_TRANSPARENT_TEXT);
@@ -382,8 +403,7 @@ int main(void)
                     threshold_counter = 0;
                     angle_threshold_flag = 0;
 
-                    unsigned char test[] = {'P', '\0'};
-                    transmit_data(test);
+                    transmit_data(signal);
                 }
 
                 floatToString(angle, angle_str);
