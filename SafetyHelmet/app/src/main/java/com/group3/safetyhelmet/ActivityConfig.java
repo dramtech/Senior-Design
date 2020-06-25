@@ -3,18 +3,24 @@ package com.group3.safetyhelmet;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelUuid;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -40,11 +46,17 @@ public class ActivityConfig extends AppCompatActivity {
 
     BluetoothConnectionService btConnService = null;
 
+    final int SEND_SMS_PERMISSION_REQUEST_CODE = 1;
+    private static String phoneNum = "9549078034";
+    private static String message = "EMERGENCY:\nThis is a message coming from the SAFETY HELMET system.\n";
+
+    private static Context context;
+
     static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
     BluetoothDevice btDevice;
 
     private HashSet<String> bluetoothDevices = new HashSet<String>();
-    private String btDeviceAddress = "00:14:03:06:06:89";
+    private String btDeviceAddress = "00:14:03:05:FE:90";
     private String btDevicePasskey = "1234";
 
     private Button btnStartConn;
@@ -165,6 +177,13 @@ public class ActivityConfig extends AppCompatActivity {
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
         intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
         registerReceiver(broadcastReceiverBTPair,intentFilter);
+
+        context = getApplicationContext();
+
+        if (!checkPermission(Manifest.permission.SEND_SMS)) {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.SEND_SMS},
+                    SEND_SMS_PERMISSION_REQUEST_CODE);
+        }
 
         tempSwitch = (Switch) findViewById(R.id.tempSwitch);
         tempSwitch.setText(tempUnit);
@@ -336,8 +355,26 @@ public class ActivityConfig extends AppCompatActivity {
         }
     }
 
-    public void setTempUnit(String s) {
-        tempUnit = s;
+    public static void receivedData(String data) {
+        Log.d(TAG, "Trying to send message...");
+        if (data.compareTo("sSS") == 0 && checkPermission(Manifest.permission.SEND_SMS)) {
+            Log.d(TAG, "Sending SMS...");
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phoneNum, null, message,
+                    null, null);
+        }
+    }
+
+    public static boolean checkPermission(String permission) {
+        Log.d(TAG, "Checking permissions...");
+        int check = ContextCompat.checkSelfPermission(context, permission);
+        return (check == PackageManager.PERMISSION_GRANTED);
+    }
+
+    public void setTempUnit(String unit) {
+        byte[] bytes = unit.getBytes();
+        btConnService.writeOut(bytes);
+        tempUnit = unit;
     }
 
     public String getTempUnit() {

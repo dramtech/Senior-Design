@@ -190,23 +190,21 @@ public class BluetoothConnectionService {
         public void run() {
             byte[] buffer = new byte[2048];
             int bytes;
-            int cnt = 0;
-
-            StringBuilder tempData = new StringBuilder();
+            StringBuilder data = new StringBuilder();
 
             while (!STOP) {
                 try {
                     bytes = inStream.read(buffer);
                     String dataIn = new String(buffer, 0, bytes);
 
-                    if (cnt != 2) {
-                        tempData.append(dataIn);
-                        cnt++;
-                    } else {
-                        Log.d(TAG, "Data In: " + tempData.toString());
-                        tempData.setLength(0);
-                        cnt = 0;
+                    data.append(dataIn);
+
+                    if (data.length() == 3) {
+                        Log.d(TAG, data.toString());
+                        ActivityConfig.receivedData(data.toString());
+                        data.setLength(0);
                     }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     break;
