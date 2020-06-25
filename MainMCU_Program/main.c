@@ -67,6 +67,8 @@ uint8_t measure_dis = 0;
 uint8_t temp_flag = 20;
 uint8_t angle_flag = 0;
 uint8_t bluetooth_conn_flag = 0;
+uint8_t angle_threshold_flag = 0;
+uint8_t threshold_counter = 0;
 
 #if defined(__IAR_SYSTEMS_ICC__)
 int16_t __low_level_init(void) {
@@ -122,6 +124,9 @@ __interrupt void T0A0_ISR() {
         measure_dis = 1;
     }
 
+    if (angle_threshold_flag) {
+        threshold_counter++;
+    }
 }
 
 int main(void)
@@ -242,9 +247,10 @@ int main(void)
     init_timer();
     init_bluetooth();
 
-    _enable_interrupts();
+    _disable_interrupts();
 
     while(1) {
+
         // TODO Bluetooth procedure
         if(procedure[0]) {
             // TODO implement all Bluetooth interaction inside this if statement
@@ -268,6 +274,9 @@ int main(void)
                     procedure[3] = ON; //Gyro/Acc
 
                     bluetooth_pair_flag = 1; // Set bluetooth pair ON.
+                    temp_flag = 15; // Set temp_flag to output temperature value immediately after bluetooth is paired.
+                    angle_flag = 0;
+                    _enable_interrupts();
                 }
             }
         }
@@ -359,20 +368,38 @@ int main(void)
             if(angle_flag == 2) {
                 angle_flag = 0;
                 getAngle(&angle);
-//                floatToString(angle, angle_str);
-//
-//                // Print to the screen for debugging
-//                Graphics_setForegroundColor(&g_sContext, ClrBlack);
-//                Graphics_fillRectangle(&g_sContext, &angle_rect);
-//                Graphics_setForegroundColor(&g_sContext, ClrWhite);
-//                angle_rect.xMax = Graphics_getStringWidth(&g_sContext, "Angle: ", -1)
-//                                  + Graphics_getStringWidth(&g_sContext, angle_str, -1);
-//
-//                Graphics_drawString(&g_sContext,
-//                                    angle_str, strlen(angle_str),
-//                                    Graphics_getStringWidth(&g_sContext, "Angle: ", -1),
-//                                    TEMP_TEXT_POS_yMIN - 15,
-//                                    GRAPHICS_TRANSPARENT_TEXT);
+
+                float threshold = 60.0;
+
+                if (angle > threshold) {
+                    angle_threshold_flag = 1;
+                } else {
+                    angle_threshold_flag = 0;
+                    threshold_counter = 0;
+                }
+
+                if (threshold_counter > 9) {
+                    threshold_counter = 0;
+                    angle_threshold_flag = 0;
+
+                    unsigned char test[] = {'P', '\0'};
+                    transmit_data(test);
+                }
+
+                floatToString(angle, angle_str);
+
+                // Print to the screen for debugging
+                Graphics_setForegroundColor(&g_sContext, ClrBlack);
+                Graphics_fillRectangle(&g_sContext, &angle_rect);
+                Graphics_setForegroundColor(&g_sContext, ClrWhite);
+                angle_rect.xMax = Graphics_getStringWidth(&g_sContext, "Angle: ", -1)
+                                  + Graphics_getStringWidth(&g_sContext, angle_str, -1);
+
+                Graphics_drawString(&g_sContext,
+                                    angle_str, strlen(angle_str),
+                                    Graphics_getStringWidth(&g_sContext, "Angle: ", -1),
+                                    TEMP_TEXT_POS_yMIN - 15,
+                                    GRAPHICS_TRANSPARENT_TEXT);
 
             }
         }
