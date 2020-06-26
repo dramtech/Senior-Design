@@ -271,6 +271,14 @@ void SetAddress(int16_t lX,
 
 }
 
+void SetBrightness(unsigned char b) {
+    unsigned char command[2];
+    command[0] = 0x81;          // SET CONTRAST CONTROL
+    command[1] = b;          // Set brightness value
+
+    WriteCommand(command, 2);
+}
+
 static void
 InitGPIOLCDInterface(void)
 {

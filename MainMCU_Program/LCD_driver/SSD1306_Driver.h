@@ -182,5 +182,6 @@
 extern void SSD1306_DriverInit(void);
 extern const Graphics_Display g_sSSD1306_Driver;
 extern uint8_t SSD1306_Memory[];
+extern void SetBrightness(unsigned char b);
 
 #endif // __Template_Driver_H__
