@@ -30,6 +30,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
 #include <msp430.h>
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -112,6 +113,8 @@ __interrupt void T0A0_ISR() {
     togg ^= BIT0;
     // Hardware clears the flag (CCIFG in TA0CCTL0)
 
+    temp_unit_flag = 1;
+
     if(togg == 0) {
         flag_L = 1;
         flag_R = 1;
@@ -144,10 +147,10 @@ int main(void)
 
     Graphics_Context g_sContext;
 
-    uint8_t procedure[4] = {OFF,    // Bluetooth
-                            ON,   // Ultrasonic
+    uint8_t procedure[4] = {ON,    // Bluetooth
+                            OFF,   // Ultrasonic
                             OFF,   // Brightness
-                            ON};   //Gyro/Acc
+                            OFF};   //Gyro/Acc
 
     unsigned int distance_cm[2];
     distance_cm[0] = 0;
@@ -161,6 +164,10 @@ int main(void)
     int bluetooth_pair_flag = 0;
     const char *signal = "sSS"; // emergency signal value.
     char tempUnit = 'F';
+    unsigned char initialSetting = '\0';
+
+    unsigned char value = '\0';
+    char unit = '0';
 
     // Set up the LCD also initialize I2C
     SSD1306_DriverInit();
@@ -210,7 +217,7 @@ int main(void)
                        22);
 
     // Text for debugging
-    Graphics_drawString(&g_sContext, "Temperature: ", strlen("Temperature: "), 0, TEMP_TEXT_POS_yMIN, GRAPHICS_TRANSPARENT_TEXT);
+//    Graphics_drawString(&g_sContext, "Temperature: ", strlen("Temperature: "), 0, TEMP_TEXT_POS_yMIN, GRAPHICS_TRANSPARENT_TEXT);
 //    Graphics_drawString(&g_sContext, "Angle: ", strlen("Angle: "), 0, TEMP_TEXT_POS_yMIN - 15, GRAPHICS_TRANSPARENT_TEXT);
 
     Graphics_Rectangle rect_R, rect_L, rect2, temp_del, angle_rect;
@@ -234,9 +241,11 @@ int main(void)
     rect2.yMax = Graphics_getStringHeight(&g_sContext);
 
     // Temperature deleting square (debugging)
-    temp_del.xMin = Graphics_getStringWidth(&g_sContext, "Temperature: ", -1);
-    temp_del.xMax = Graphics_getStringWidth(&g_sContext, "Temperature: ", -1)
-                    + Graphics_getStringWidth(&g_sContext, temp_str, -1);
+//    temp_del.xMin = Graphics_getStringWidth(&g_sContext, "Temperature: ", -1);
+    temp_del.xMin = 0;
+//    temp_del.xMax = Graphics_getStringWidth(&g_sContext, "Temperature: ", -1)
+//                    + Graphics_getStringWidth(&g_sContext, temp_str, -1);
+    temp_del.xMax = Graphics_getStringWidth(&g_sContext, temp_str, -1);
     temp_del.yMin = TEMP_TEXT_POS_yMIN - 1;
     temp_del.yMax = TEMP_TEXT_POS_yMIN + Graphics_getStringHeight(&g_sContext);
 
@@ -267,29 +276,37 @@ int main(void)
 
             // Temperature value is stored in temp variable (signed int)
             // as celsius unites
-
+//            SetBrightness();
             if (!bluetooth_pair_flag) {
-                unsigned char retval = '0';
-                retval = receive_data();
 
-                if (retval == c) {
+                initialSetting = receive_data();
+
+                if (initialSetting == c) {
                     procedure[1] = ON; // Ultrasonic
                     procedure[3] = ON; //Gyro/Acc
 
                     bluetooth_pair_flag = 1; // Set bluetooth pair ON.
                     temp_flag = 15; // Set temp_flag to output temperature value immediately after bluetooth is paired.
                     angle_flag = 0;
+
+                    __delay_cycles(1000000);
+                    initialSetting = receive_data();
+
+                    // Set brightness
+                    SetBrightness(initialSetting);
                     _enable_interrupts();
                 }
             }
 
             if (temp_unit_flag) {
               temp_unit_flag = 0;
-              unsigned char value = receive_data();
-              char unit = (char) value;
+              value = receive_data();
+              unit = (char) value;
 
               if (unit == 'C' || unit == 'F') {
                   tempUnit = unit;
+              } else if (value){
+                  SetBrightness(value);
               }
             }
         }
@@ -363,7 +380,7 @@ int main(void)
 
                 // Temp conversion.
                 if (tempUnit == 'F') {
-                    temp = temp * 2 + 32;
+                    temp = (int)round(temp * 1.8 + 32.0);
                 }
 
                 sprintf(temp_str, "t%d", temp);
@@ -375,12 +392,14 @@ int main(void)
                 Graphics_setForegroundColor(&g_sContext, ClrBlack);
                 Graphics_fillRectangle(&g_sContext, &temp_del);
                 Graphics_setForegroundColor(&g_sContext, ClrWhite);
-                temp_del.xMax = Graphics_getStringWidth(&g_sContext, "Temperature: ", -1)
-                                + Graphics_getStringWidth(&g_sContext, temp_str + 1, -1);
+//                temp_del.xMax = Graphics_getStringWidth(&g_sContext, "Temperature: ", -1)
+//                                + Graphics_getStringWidth(&g_sContext, temp_str + 1, -1);
+
+                temp_del.xMax = Graphics_getStringWidth(&g_sContext, temp_str + 1, -1);
 
                 Graphics_drawString(&g_sContext,
                                     temp_str + 1, strlen(temp_str),
-                                    Graphics_getStringWidth(&g_sContext, "Temperature: ", -1),
+                                    0,
                                     TEMP_TEXT_POS_yMIN,
                                     GRAPHICS_TRANSPARENT_TEXT);
             }
@@ -406,20 +425,20 @@ int main(void)
                     transmit_data(signal);
                 }
 
-                floatToString(angle, angle_str);
-
-                // Print to the screen for debugging
-                Graphics_setForegroundColor(&g_sContext, ClrBlack);
-                Graphics_fillRectangle(&g_sContext, &angle_rect);
-                Graphics_setForegroundColor(&g_sContext, ClrWhite);
-                angle_rect.xMax = Graphics_getStringWidth(&g_sContext, "Angle: ", -1)
-                                  + Graphics_getStringWidth(&g_sContext, angle_str, -1);
-
-                Graphics_drawString(&g_sContext,
-                                    angle_str, strlen(angle_str),
-                                    Graphics_getStringWidth(&g_sContext, "Angle: ", -1),
-                                    TEMP_TEXT_POS_yMIN - 15,
-                                    GRAPHICS_TRANSPARENT_TEXT);
+//                floatToString(angle, angle_str);
+//
+//                // Print to the screen for debugging
+//                Graphics_setForegroundColor(&g_sContext, ClrBlack);
+//                Graphics_fillRectangle(&g_sContext, &angle_rect);
+//                Graphics_setForegroundColor(&g_sContext, ClrWhite);
+//                angle_rect.xMax = Graphics_getStringWidth(&g_sContext, "Angle: ", -1)
+//                                  + Graphics_getStringWidth(&g_sContext, angle_str, -1);
+//
+//                Graphics_drawString(&g_sContext,
+//                                    angle_str, strlen(angle_str),
+//                                    Graphics_getStringWidth(&g_sContext, "Angle: ", -1),
+//                                    TEMP_TEXT_POS_yMIN - 15,
+//                                    GRAPHICS_TRANSPARENT_TEXT);
 
             }
         }
