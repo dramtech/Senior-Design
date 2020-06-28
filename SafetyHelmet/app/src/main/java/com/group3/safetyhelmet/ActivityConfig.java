@@ -5,8 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
@@ -17,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelUuid;
@@ -26,19 +25,20 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.card.MaterialCardView;
-
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
-
 
 public class ActivityConfig extends AppCompatActivity {
     private static final String TAG = "ActivityConfig";
@@ -47,8 +47,12 @@ public class ActivityConfig extends AppCompatActivity {
     BluetoothConnectionService btConnService = null;
 
     final int SEND_SMS_PERMISSION_REQUEST_CODE = 1;
-    private static String phoneNum = "9549078034";
-    private static String message = "EMERGENCY:\nThis is a message coming from the SAFETY HELMET system.\n";
+    private static String phoneNum;
+    private static String MESSAGE = "EMERGENCY:\nThis is a message coming from the SAFETY HELMET system.\n";
+
+
+    private EditText brightSetting;
+    private Button setBrightness;
 
     private static Context context;
 
@@ -180,6 +184,9 @@ public class ActivityConfig extends AppCompatActivity {
 
         context = getApplicationContext();
 
+        brightSetting = (EditText) findViewById(R.id.editText);
+        setBrightness = (Button) findViewById(R.id.button4);
+
         if (!checkPermission(Manifest.permission.SEND_SMS)) {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.SEND_SMS},
                     SEND_SMS_PERMISSION_REQUEST_CODE);
@@ -248,9 +255,13 @@ public class ActivityConfig extends AppCompatActivity {
         btnSendOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String data = "A";
-                byte[] bytes = data.getBytes();
+                String start = "A";
+                byte setting = (byte)(1 * (0xFF - 1));
+                byte[] bytes = start.getBytes();
+                byte[] by = new byte[1];
+                by[0] = setting;
                 btConnService.writeOut(bytes);
+                btConnService.writeOut(by);
             }
         });
 
@@ -260,6 +271,22 @@ public class ActivityConfig extends AppCompatActivity {
                 String data = "B";
                 byte[] bytes = data.getBytes();
                 btConnService.writeOut(bytes);
+            }
+        });
+
+        setBrightness.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                double value = Double.valueOf(brightSetting.getText().toString()) / 100;
+
+                Log.d(TAG, String.valueOf(value));
+
+                byte setting = (byte)(value * (0xFF - 1));
+                byte[] by = new byte[1];
+                by[0] = setting;
+
+                Log.d(TAG, "Setting new brightness value...");
+                btConnService.writeOut(by);
             }
         });
     }
@@ -275,7 +302,12 @@ public class ActivityConfig extends AppCompatActivity {
             Log.d(TAG, "DEBUG: NULL");
             btConnService = new BluetoothConnectionService(getApplicationContext());
         }
-        btConnService.startClient(device, uuid);
+
+        if (btDevice == null) {
+            Log.d(TAG, "Bluetooth Device null...");
+        } else {
+            btConnService.startClient(device, uuid);
+        }
     }
 
     private void pairDevice(BluetoothDevice device) {
@@ -292,12 +324,13 @@ public class ActivityConfig extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void checkDiscoveryPermissions() {
+        Log.d(TAG, "Checking discovery permissions...");
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            Log.d(TAG, "ERROR: Permissions.");
             int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
             permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
             if (permissionCheck != 0) {
                 this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
+                Log.d(TAG, "Requesting discovery permissions...");
             } else {
                 Log.d(TAG, "Permissions satisfied.");
             }
@@ -317,6 +350,8 @@ public class ActivityConfig extends AppCompatActivity {
             registerReceiver(broadcastReceiverBTDiscovered, filter);
 
             checkDiscoveryPermissions();
+
+            Log.d(TAG, "Starting device discovery...");
             bluetoothAdapter.startDiscovery();
     }
 
@@ -360,7 +395,7 @@ public class ActivityConfig extends AppCompatActivity {
         if (data.compareTo("sSS") == 0 && checkPermission(Manifest.permission.SEND_SMS)) {
             Log.d(TAG, "Sending SMS...");
             SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(phoneNum, null, message,
+            smsManager.sendTextMessage(phoneNum, null, MESSAGE,
                     null, null);
         }
     }

@@ -5,6 +5,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.util.Log;
@@ -13,6 +16,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.List;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -31,8 +41,10 @@ public class activity_emergContact extends AppCompatActivity {
     // Emergency Contact Test:
     private Button emergencyBtn;
     final int SEND_SMS_PERMISSION_REQUEST_CODE = 1;
+    //private static FusedLocationProviderClient fusedLocationClient;
+    private LocationManager mLocationManager;
 
-    private static String phoneNum = "9549078034";
+    private static String phoneNum = "9548295670";
     private static String message = "Hello, this is a test.";
 
     @Override
@@ -56,9 +68,12 @@ public class activity_emergContact extends AppCompatActivity {
 
         emergencyBtn = (Button) findViewById(R.id.signalEmerg);
         if (!checkPermission(Manifest.permission.SEND_SMS)) {
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.SEND_SMS},
-                                                SEND_SMS_PERMISSION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS},
+                    SEND_SMS_PERMISSION_REQUEST_CODE);
         }
+
+        //fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        //fetchLastLocation();
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -100,9 +115,11 @@ public class activity_emergContact extends AppCompatActivity {
             public void onClick(View v) {
                 if (checkPermission(Manifest.permission.SEND_SMS)) {
                     Log.d(TAG, "Sending SMS...");
-                    SmsManager smsManager = SmsManager.getDefault();
-                    smsManager.sendTextMessage(phoneNum, null, message,
-                                                null, null);
+                    //SmsManager smsManager = SmsManager.getDefault();
+                    //Location loc = getLastKnownLocation();
+                    //Log.d(TAG, loc.toString());
+                    //smsManager.sendTextMessage(phoneNum, null, message,
+                    //                            null, null);
                 }
             }
         });
@@ -112,5 +129,32 @@ public class activity_emergContact extends AppCompatActivity {
         int check = ContextCompat.checkSelfPermission(this, permission);
         return (check == PackageManager.PERMISSION_GRANTED);
     }
+
+    /*
+    private void fetchLastLocation() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission not granted, Kindly allow permission", Toast.LENGTH_LONG).show();
+                showPermissionAlert();
+                return;
+            }
+        }
+        /*
+     */
+        /*
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            Log.d(TAG, location.toString());
+                        }
+                        Log.d(TAG, "Failed");
+                    }
+                });
+
+         */
 
 }
