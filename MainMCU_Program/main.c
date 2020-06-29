@@ -331,12 +331,9 @@ int main(void)
 
               if (unit == 'C' || unit == 'F') {
                   tempUnit = unit;
-<<<<<<< HEAD
                   temp_flag = 19;
-=======
               } else if (value){
                   SetBrightness(value);
->>>>>>> 154363679dc17aa47793e25b0c17925982baa887
               }
             }
         }

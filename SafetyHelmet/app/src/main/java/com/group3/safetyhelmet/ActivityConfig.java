@@ -29,9 +29,9 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
+//import com.google.android.gms.location.FusedLocationProviderClient;
+//import com.google.android.gms.location.LocationServices;
+//import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.card.MaterialCardView;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -116,6 +116,7 @@ public class ActivityConfig extends AppCompatActivity {
 
                     // Check if desired device has been found.
                     if (bluetoothDevices.contains(btDeviceAddress)) {
+
                         Log.d(TAG, "Found Device: " + btDeviceAddress);
 
                         btDevice = device;
@@ -292,6 +293,7 @@ public class ActivityConfig extends AppCompatActivity {
     }
 
     public void startConn() {
+
         startBTConnection(btDevice, MY_UUID);
     }
 
@@ -299,6 +301,7 @@ public class ActivityConfig extends AppCompatActivity {
         Log.d(TAG, "Starting bluetooth connection.");
 
         if (btConnService == null) {
+            Log.e(TAG, "List of Bluetooth Devices: \n" + bluetoothDevices + '\n');
             Log.d(TAG, "DEBUG: NULL");
             btConnService = new BluetoothConnectionService(getApplicationContext());
         }
