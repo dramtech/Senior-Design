@@ -113,6 +113,8 @@ __interrupt void T0A0_ISR() {
     togg ^= BIT0;
     // Hardware clears the flag (CCIFG in TA0CCTL0)
 
+    temp_unit_flag = 1;
+
     if(togg == 0) {
         flag_L = 1;
         flag_R = 1;
@@ -162,6 +164,10 @@ int main(void)
     int bluetooth_pair_flag = 0;
     const char *signal = "sSS"; // emergency signal value.
     char tempUnit = 'F';
+    unsigned char initialSetting = '\0';
+
+    unsigned char value = '\0';
+    char unit = '0';
 
     // Set up the LCD also initialize I2C
     SSD1306_DriverInit();
@@ -272,27 +278,35 @@ int main(void)
             // as celsius unites
 //            SetBrightness();
             if (!bluetooth_pair_flag) {
-                unsigned char retval = '0';
-                retval = receive_data();
 
-                if (retval == c) {
+                initialSetting = receive_data();
+
+                if (initialSetting == c) {
                     procedure[1] = ON; // Ultrasonic
                     procedure[3] = ON; //Gyro/Acc
 
                     bluetooth_pair_flag = 1; // Set bluetooth pair ON.
                     temp_flag = 15; // Set temp_flag to output temperature value immediately after bluetooth is paired.
                     angle_flag = 0;
+
+                    __delay_cycles(1000000);
+                    initialSetting = receive_data();
+
+                    // Set brightness
+                    SetBrightness(initialSetting);
                     _enable_interrupts();
                 }
             }
 
             if (temp_unit_flag) {
               temp_unit_flag = 0;
-              unsigned char value = receive_data();
-              char unit = (char) value;
+              value = receive_data();
+              unit = (char) value;
 
               if (unit == 'C' || unit == 'F') {
                   tempUnit = unit;
+              } else if (value){
+                  SetBrightness(value);
               }
             }
         }
