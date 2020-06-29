@@ -204,17 +204,31 @@ int main(void)
                        ROAD_POS_xMIN,
                        ROAD_POS_yMIN);
 
+    Graphics_drawStringCentered(&g_sContext,
+                                "BT not connected",
+                                strlen("BT not connected"),
+                                (LCD_X_SIZE / 2) - 1,
+                                (Graphics_getStringHeight(&g_sContext) / 2) + 1,
+                                GRAPHICS_TRANSPARENT_TEXT);
+
+
     // Draw right car warning image
-    Graphics_drawImage(&g_sContext,
-                       &rightCarIndicator1BPP_COMP_RLE4,
-                       RIGHT_CAR_POS_xMIN,
-                       22);
+//    Graphics_drawImage(&g_sContext,
+//                       &rightCarIndicator1BPP_COMP_RLE4,
+//                       RIGHT_CAR_POS_xMIN,
+//                       22);
 
     // Text for debugging
 //    Graphics_drawString(&g_sContext, "Temperature: ", strlen("Temperature: "), 0, TEMP_TEXT_POS_yMIN, GRAPHICS_TRANSPARENT_TEXT);
 //    Graphics_drawString(&g_sContext, "Angle: ", strlen("Angle: "), 0, TEMP_TEXT_POS_yMIN - 15, GRAPHICS_TRANSPARENT_TEXT);
 
-    Graphics_Rectangle rect_R, rect_L, rect2, temp_del, angle_rect;
+    Graphics_Rectangle rect_R, rect_L, rect2, temp_del, angle_rect, title_rect;
+
+    // Title deleting square
+    title_rect.xMin = 0;
+    title_rect.xMax = LCD_X_SIZE - 1;
+    title_rect.yMin = 0;
+    title_rect.yMax = Graphics_getStringHeight(&g_sContext) + 1;
 
     // RIGHT car deleting square
     rect_R.xMin = RIGHT_CAR_POS_xMIN;
@@ -283,6 +297,18 @@ int main(void)
                     temp_flag = 15; // Set temp_flag to output temperature value immediately after bluetooth is paired.
                     angle_flag = 0;
                     _enable_interrupts();
+
+                    // Update title
+                    Graphics_setForegroundColor(&g_sContext, ClrBlack);
+                    Graphics_fillRectangle(&g_sContext, &title_rect);
+                    Graphics_setForegroundColor(&g_sContext, ClrWhite);
+
+                    Graphics_drawStringCentered(&g_sContext,
+                                                "Connected",
+                                                strlen("Connected"),
+                                                (LCD_X_SIZE / 2) - 1,
+                                                (Graphics_getStringHeight(&g_sContext) / 2) + 1,
+                                                GRAPHICS_TRANSPARENT_TEXT);
                 }
             }
 
@@ -293,6 +319,7 @@ int main(void)
 
               if (unit == 'C' || unit == 'F') {
                   tempUnit = unit;
+                  temp_flag = 19;
               }
             }
         }
