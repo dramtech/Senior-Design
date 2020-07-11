@@ -18,6 +18,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.ParcelUuid;
 import android.telephony.SmsManager;
 import android.util.Log;
@@ -26,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,11 +50,11 @@ public class ActivityConfig extends AppCompatActivity {
     BluetoothConnectionService btConnService = null;
 
     final int SEND_SMS_PERMISSION_REQUEST_CODE = 1;
-    private static String phoneNum;
+    private static String phoneNum = "9549078034";
     private static String MESSAGE = "EMERGENCY:\nThis is a message coming from the SAFETY HELMET system.\n";
 
 
-    private EditText brightSetting;
+    private NumberPicker picker1;
     private Button setBrightness;
 
     private static Context context;
@@ -64,7 +67,7 @@ public class ActivityConfig extends AppCompatActivity {
     private String btDevicePasskey = "1234";
 
     private Button btnStartConn;
-    private Button btnSendOff;
+    //private Button btnSendOff;
     private Button btnSendOn;
     private Switch tempSwitch;
     private String tempUnit = "F";
@@ -112,6 +115,7 @@ public class ActivityConfig extends AppCompatActivity {
 
                     if (!bluetoothDevices.contains(device.getAddress())) {
                         bluetoothDevices.add(device.getAddress());
+                        Log.d(TAG, String.valueOf(bluetoothDevices.size()));
                     }
 
                     // Check if desired device has been found.
@@ -185,7 +189,11 @@ public class ActivityConfig extends AppCompatActivity {
 
         context = getApplicationContext();
 
-        brightSetting = (EditText) findViewById(R.id.editText);
+        picker1 = findViewById (R.id.brightnessPicker);
+        picker1.setMaxValue(100);
+        picker1.setMinValue(0);
+        picker1.setWrapSelectorWheel(false);
+
         setBrightness = (Button) findViewById(R.id.button4);
 
         if (!checkPermission(Manifest.permission.SEND_SMS)) {
@@ -243,7 +251,7 @@ public class ActivityConfig extends AppCompatActivity {
         });
 
         btnStartConn = (Button) findViewById(R.id.button);
-        btnSendOff = (Button) findViewById(R.id.button2);
+        //btnSendOff = (Button) findViewById(R.id.button2);
         btnSendOn = (Button) findViewById(R.id.button3);
 
         btnStartConn.setOnClickListener(new View.OnClickListener() {
@@ -266,19 +274,23 @@ public class ActivityConfig extends AppCompatActivity {
             }
         });
 
+        /*
         btnSendOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*
                 String data = "B";
                 byte[] bytes = data.getBytes();
                 btConnService.writeOut(bytes);
             }
         });
+                 */
+
 
         setBrightness.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                double value = Double.valueOf(brightSetting.getText().toString()) / 100;
+                double value = Double.valueOf(picker1.getValue() / 100);
 
                 Log.d(TAG, String.valueOf(value));
 
@@ -305,12 +317,7 @@ public class ActivityConfig extends AppCompatActivity {
             Log.d(TAG, "DEBUG: NULL");
             btConnService = new BluetoothConnectionService(getApplicationContext());
         }
-
-        if (btDevice == null) {
-            Log.d(TAG, "Bluetooth Device null...");
-        } else {
-            btConnService.startClient(device, uuid);
-        }
+        btConnService.startClient(device, uuid);
     }
 
     private void pairDevice(BluetoothDevice device) {
@@ -319,6 +326,7 @@ public class ActivityConfig extends AppCompatActivity {
             device.createBond();
             Log.d(TAG, "Pairing finished.");
             final TextView helloTextView = (TextView) findViewById(R.id.bluetoothConfigState);
+            MainActivity.updateDeviceStatus(1);
             helloTextView.setText(R.string.device_status_connected);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -333,7 +341,6 @@ public class ActivityConfig extends AppCompatActivity {
             permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
             if (permissionCheck != 0) {
                 this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
-                Log.d(TAG, "Requesting discovery permissions...");
             } else {
                 Log.d(TAG, "Permissions satisfied.");
             }
@@ -342,20 +349,20 @@ public class ActivityConfig extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void discoverBluetoothDevices() {
-            IntentFilter filter = new IntentFilter();
-            filter.addAction(BluetoothDevice.ACTION_FOUND);
-            registerReceiver(broadcastReceiverBTDiscovered, filter);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(broadcastReceiverBTDiscovered, filter);
 
-            filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-            registerReceiver(broadcastReceiverBTDiscovered, filter);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        registerReceiver(broadcastReceiverBTDiscovered, filter);
 
-            filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-            registerReceiver(broadcastReceiverBTDiscovered, filter);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        registerReceiver(broadcastReceiverBTDiscovered, filter);
 
-            checkDiscoveryPermissions();
+        checkDiscoveryPermissions();
 
-            Log.d(TAG, "Starting device discovery...");
-            bluetoothAdapter.startDiscovery();
+        Log.d(TAG, "Starting device discovery...");
+        bluetoothAdapter.startDiscovery();
     }
 
     public void disableBluetooth() {
@@ -372,6 +379,7 @@ public class ActivityConfig extends AppCompatActivity {
             }
 
             bluetoothAdapter.disable();
+            MainActivity.updateDeviceStatus(0);
             IntentFilter intentFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
             registerReceiver(broadcastReceiverBTEnable, intentFilter);
         }
@@ -400,6 +408,17 @@ public class ActivityConfig extends AppCompatActivity {
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(phoneNum, null, MESSAGE,
                     null, null);
+        } else if (data.charAt(0) == 't') {
+            Log.d(TAG, "Updating temperature...");
+            StringBuilder sb = new StringBuilder();
+            sb.append(data.charAt(1));
+            sb.append(data.charAt(2));
+            sb.append("°");
+
+            // Adds work to UI thread queue.
+            HelperThread ht = new HelperThread(sb.toString());
+            new Thread(ht).start();
+            sb = null;
         }
     }
 
@@ -425,5 +444,27 @@ public class ActivityConfig extends AppCompatActivity {
 
     public String getBlueOnState() {
         return blueOnState;
+    }
+}
+
+class HelperThread implements Runnable {
+    private static final String TAG = "ThreadHelper";
+    private String temp;
+
+    public HelperThread(String temp) {
+        this.temp = temp;
+    }
+
+    @Override
+    public void run() {
+        Handler threadHandler = new Handler(Looper.getMainLooper());
+        Log.d(TAG, "Sending temp value in another thread...");
+
+        threadHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                MainActivity.updateTempView(temp);
+            }
+        });
     }
 }
