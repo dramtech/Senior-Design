@@ -41,8 +41,8 @@
 #include "modules/modules.h"
 
 
-#define redLED BIT0 // Red LED at P1.0
-#define greenLED BIT7 // Green LED at P9.7
+#define redLED BIT6 // Red LED at P1.6
+#define greenLED BIT7 // Green LED at P1.7
 #define ONE_SEC 32768
 #define ON 0x01
 #define OFF 0x00
@@ -107,7 +107,7 @@ void floatToString(float input, char * output) {
 #pragma vector = TIMER0_A0_VECTOR
 __interrupt void T0A0_ISR() {
     // Toggle the LEDs for debugging
-    P1OUT ^= redLED;
+    P1OUT ^= (redLED | greenLED);
     TA0CCR0 += 16384; // Schedule the next interrupt
 
     togg ^= BIT0;
@@ -140,17 +140,17 @@ int main(void)
     PM5CTL0 &= ~LOCKLPM5;  // Enable the GPIO pins
 
     // Set pins for LEDs
-    P1DIR |= redLED; // Direct pin as output
-    P9DIR |= greenLED; // Direct pin as output
-    P1OUT &= ~redLED; // Turn LED Off
-    P9OUT &= ~greenLED; // Turn LED Off
+    P1DIR |= redLED | greenLED; // Direct pin as output
+//    P9DIR |= greenLED; // Direct pin as output
+    P1OUT &= ~(redLED | greenLED); // Turn LED Off
+//    P9OUT &= ~greenLED; // Turn LED Off
 
     Graphics_Context g_sContext;
 
-    uint8_t procedure[4] = {ON,    // Bluetooth
-                            OFF,   // Ultrasonic
+    uint8_t procedure[4] = {OFF,    // Bluetooth
+                            ON,   // Ultrasonic
                             OFF,   // Brightness
-                            OFF};   //Gyro/Acc
+                            ON};   //Gyro/Acc
 
     unsigned int distance_cm[2];
     distance_cm[0] = 0;
@@ -163,7 +163,7 @@ int main(void)
     unsigned char c = 'A';
     int bluetooth_pair_flag = 0;
     const char *signal = "sSS"; // emergency signal value.
-    char tempUnit = 'F';
+    char tempUnit = 'C';
     unsigned char initialSetting = '\0';
 
     unsigned char value = '\0';
@@ -273,8 +273,8 @@ int main(void)
     init_timer();
     init_bluetooth();
 
-    _disable_interrupts();
-
+//    _disable_interrupts();
+    _enable_interrupts();
     while(1) {
 
         // TODO Bluetooth procedure
@@ -308,6 +308,11 @@ int main(void)
 
                     // Set brightness
                     SetBrightness(initialSetting);
+
+                    // Set temperature unites
+                    __delay_cycles(1000000);
+                    tempUnit = receive_data();
+
                     _enable_interrupts();
 
                     // Update title
