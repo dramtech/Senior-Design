@@ -3,6 +3,7 @@ package com.group3.safetyhelmet;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -22,13 +23,21 @@ import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static Context context;
     private Button setEmergContBtn;
     private Button setConfigBtn;
-    private EditText tempDataView;
+    private static TextView tempDataView;
+    private static TextView deviceStatusView;
+    private static TextView emergencyContactView;
+    private static TextView addEmergAlert;
+    private static TextView bluetoothConnAlert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        context = getApplicationContext();
+
         setContentView(R.layout.activity_main);
 
         // Setting app the tool bar
@@ -42,6 +51,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setEmergContBtn.setOnClickListener(this);
         setConfigBtn = findViewById(R.id.setConfigBtn);
         setConfigBtn.setOnClickListener(this);
+
+        deviceStatusView = (TextView) findViewById(R.id.deviceStatus);
+        tempDataView = (TextView) findViewById(R.id.tempValue);
+        emergencyContactView = (TextView) findViewById(R.id.emergContValue);
+
+        addEmergAlert = (TextView) findViewById(R.id.warningEmergMesg);
+        bluetoothConnAlert = (TextView) findViewById(R.id.warningConnectDevice);
     }
 
     @Override
@@ -74,5 +90,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void loadNav() {
         Intent intent = new Intent(this, ActivityNav.class);
         startActivity(intent);
+    }
+
+    public static void updateTempView(String temp) {
+        tempDataView.setText(temp);
+    }
+
+    public static void updateDeviceStatus(int code) {
+        if (code == 1) {
+            deviceStatusView.setTextColor(ContextCompat.getColor(context, R.color.colorDeviceStatConnected));
+            tempDataView.setTextColor(ContextCompat.getColor(context, R.color.colorDeviceStatConnected));
+            deviceStatusView.setText("Connected");
+            bluetoothConnAlert.setText("");
+            tempDataView.setText("84");
+        } else if (code == 0){
+            deviceStatusView.setTextColor(ContextCompat.getColor(context, R.color.colorDeviceStatNotConnected));
+            deviceStatusView.setText("Not Connected");
+            bluetoothConnAlert.setText(R.string.warning_connect_device);
+        }
+    }
+
+    public static void updateEmergContactInfoView(String name, String phoneNum) {
+        StringBuilder reformatPhoneNum = new StringBuilder("(").append(phoneNum.substring(0, 3));
+        reformatPhoneNum.append(") ").append(phoneNum.substring(3, 6)).append("-").append(phoneNum.substring(6)).toString();
+        emergencyContactView.setTextColor(ContextCompat.getColor(context, R.color.colorDeviceStatConnected));
+        emergencyContactView.setText(name + " : " + reformatPhoneNum);
+        addEmergAlert.setText("");
     }
 }

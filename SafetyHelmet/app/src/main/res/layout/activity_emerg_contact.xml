@@ -17,8 +17,8 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <com.google.android.material.card.MaterialCardView
-        android:layout_width="394dp"
-        android:layout_height="350dp"
+        android:layout_width="391dp"
+        android:layout_height="534dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
@@ -30,14 +30,27 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="484dp"
             android:layout_marginTop="50dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/setEmergContFormTitle2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="72dp"
+                android:text="@string/message"
+                android:textSize="22dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.142"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/emergContNumber" />
 
             <EditText
                 android:id="@+id/emergContName"
                 android:layout_width="245dp"
                 android:layout_height="35dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
                 android:background="@drawable/button_background"
                 android:elevation="8dp"
                 android:ems="10"
@@ -57,6 +70,7 @@
                 android:layout_width="246dp"
                 android:layout_height="33dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
                 android:background="@drawable/button_background"
                 android:elevation="8dp"
                 android:ems="10"
@@ -75,6 +89,7 @@
                 android:layout_width="245dp"
                 android:layout_height="34dp"
                 android:layout_marginTop="24dp"
+                android:layout_marginEnd="10dp"
                 android:background="@drawable/button_background"
                 android:ems="10"
                 android:hint="@string/last_name"
@@ -92,37 +107,52 @@
                 android:id="@+id/saveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="16dp"
                 android:background="@drawable/button_background"
                 android:text="@string/save"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/emergContNumber"
-                app:layout_constraintStart_toStartOf="@+id/emergContNumber" />
+                app:layout_constraintHorizontal_bias="0.841"
+                app:layout_constraintStart_toStartOf="@+id/emergContNumber"
+                app:layout_constraintTop_toBottomOf="@+id/emergMessage" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/editButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/button_background"
+                android:text="@string/edit"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/emergContNumber"
+                app:layout_constraintHorizontal_bias="0.139"
+                app:layout_constraintStart_toStartOf="@+id/emergContNumber"
+                app:layout_constraintTop_toBottomOf="@+id/emergMessage" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/setEmergContFormTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="72dp"
+                android:layout_marginStart="52dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/emerg_cont_form_title"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <EditText
+                android:id="@+id/emergMessage"
+                android:layout_width="305dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="100dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/emergContNumber" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
-
-    <Button
-        android:id="@+id/signalEmerg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="148dp"
-        android:text="Signal Emergency"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

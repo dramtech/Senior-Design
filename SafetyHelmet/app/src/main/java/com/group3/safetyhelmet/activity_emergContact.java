@@ -34,18 +34,11 @@ public class activity_emergContact extends AppCompatActivity {
     private EditText contactFirstName;
     private EditText contactLastName;
     private EditText contactPhoneNum;
+    private EditText messageEditText;
     private Button saveBtn;
+    private Button editBtn;
     private SharedPreferences sp;
     private Storage storage;
-
-    // Emergency Contact Test:
-    private Button emergencyBtn;
-    final int SEND_SMS_PERMISSION_REQUEST_CODE = 1;
-    //private static FusedLocationProviderClient fusedLocationClient;
-    private LocationManager mLocationManager;
-
-    private static String phoneNum = "9548295670";
-    private static String message = "Hello, this is a test.";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,15 +58,8 @@ public class activity_emergContact extends AppCompatActivity {
         contactLastName = (EditText) findViewById(R.id.emergContLastName);
         contactPhoneNum = (EditText) findViewById(R.id.emergContNumber);
         saveBtn = (Button) findViewById(R.id.saveButton);
-
-        emergencyBtn = (Button) findViewById(R.id.signalEmerg);
-        if (!checkPermission(Manifest.permission.SEND_SMS)) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS},
-                    SEND_SMS_PERMISSION_REQUEST_CODE);
-        }
-
-        //fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        //fetchLastLocation();
+        editBtn = (Button) findViewById(R.id.editButton);
+        messageEditText = (EditText) findViewById(R.id.emergMessage);
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -82,6 +68,7 @@ public class activity_emergContact extends AppCompatActivity {
                 String firstName = contactFirstName.getText().toString();
                 String lastName = contactLastName.getText().toString();
                 String phoneNum = contactPhoneNum.getText().toString();
+                String personalMessage = messageEditText.getText().toString();
 
                 // Check if contact info entered is valid.
                 if (firstName == null || lastName == null ||
@@ -94,67 +81,37 @@ public class activity_emergContact extends AppCompatActivity {
                 storage.add("ContactFirstName1", firstName);
                 storage.add("ContactLastName1", lastName);
                 storage.add("ContactPhoneNum1", phoneNum);
+                storage.add("PersonalMessage1", personalMessage);
+
+                // Disable edit text fields.
+                contactFirstName.setEnabled(false);
+                contactLastName.setEnabled(false);
+                contactPhoneNum.setEnabled(false);
+                messageEditText.setEnabled(false);
 
                 // Let user know contact info has been added.
                 Toast toast = Toast.makeText(getApplicationContext(), R.string.toast_contact_added, Toast.LENGTH_SHORT);
                 toast.show();
 
-                // Clear input form.
-                contactFirstName.setText("");
-                contactLastName.setText("");
-                contactPhoneNum.setText("");
+                String fullName = firstName += " " + lastName;
+                MainActivity.updateEmergContactInfoView(fullName, phoneNum);
 
                 Log.d(TAG, storage.getValue("ContactFirstName1"));
                 Log.d(TAG, storage.getValue("ContactLastName1"));
                 Log.d(TAG, storage.getValue("ContactPhoneNum1"));
+                Log.d(TAG, storage.getValue("PersonalMessage1"));
             }
         });
 
-        // SMS emergency message test.
-        emergencyBtn.setOnClickListener(new View.OnClickListener() {
+        editBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (checkPermission(Manifest.permission.SEND_SMS)) {
-                    Log.d(TAG, "Sending SMS...");
-                    //SmsManager smsManager = SmsManager.getDefault();
-                    //Location loc = getLastKnownLocation();
-                    //Log.d(TAG, loc.toString());
-                    //smsManager.sendTextMessage(phoneNum, null, message,
-                    //                            null, null);
-                }
+
+                // Enable edit text fields.
+                contactFirstName.setEnabled(true);
+                contactLastName.setEnabled(true);
+                contactPhoneNum.setEnabled(true);
+                messageEditText.setEnabled(true);
             }
         });
     }
-
-    public boolean checkPermission(String permission) {
-        int check = ContextCompat.checkSelfPermission(this, permission);
-        return (check == PackageManager.PERMISSION_GRANTED);
-    }
-
-    /*
-    private void fetchLastLocation() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission not granted, Kindly allow permission", Toast.LENGTH_LONG).show();
-                showPermissionAlert();
-                return;
-            }
-        }
-        /*
-     */
-        /*
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            // Logic to handle location object
-                            Log.d(TAG, location.toString());
-                        }
-                        Log.d(TAG, "Failed");
-                    }
-                });
-
-         */
-
 }
