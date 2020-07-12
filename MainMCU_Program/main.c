@@ -41,8 +41,8 @@
 #include "modules/modules.h"
 
 
-#define redLED BIT6 // Red LED at P1.6
-#define greenLED BIT7 // Green LED at P1.7
+#define redLED BIT7 // Red LED at P1.6
+#define greenLED BIT6 // Green LED at P1.7
 #define ONE_SEC 32768
 #define ON 0x01
 #define OFF 0x00
@@ -107,7 +107,7 @@ void floatToString(float input, char * output) {
 #pragma vector = TIMER0_A0_VECTOR
 __interrupt void T0A0_ISR() {
     // Toggle the LEDs for debugging
-    P1OUT ^= (redLED | greenLED);
+    P1OUT ^= redLED;
     TA0CCR0 += 16384; // Schedule the next interrupt
 
     togg ^= BIT0;
@@ -145,12 +145,18 @@ int main(void)
     P1OUT &= ~(redLED | greenLED); // Turn LED Off
 //    P9OUT &= ~greenLED; // Turn LED Off
 
+    // Set wear detection button
+    P1DIR &= ~BIT1;         // Set pin 1.1 as input
+    P1REN |= BIT1;          // Enable pull up resistor
+    P1OUT |= BIT1;          // Set pull up resistor
+
+
     Graphics_Context g_sContext;
 
     uint8_t procedure[4] = {OFF,    // Bluetooth
-                            ON,   // Ultrasonic
+                            OFF,   // Ultrasonic
                             OFF,   // Brightness
-                            ON};   //Gyro/Acc
+                            OFF};   //Gyro/Acc
 
     unsigned int distance_cm[2];
     distance_cm[0] = 0;
@@ -276,6 +282,18 @@ int main(void)
 //    _disable_interrupts();
     _enable_interrupts();
     while(1) {
+        if((P1IN & BIT1) == BIT1) {
+            procedure[1] = OFF;
+            procedure[3] = OFF;
+            P1OUT &= ~greenLED;
+        } else {
+            procedure[1] = ON;
+            procedure[3] = ON;
+            P1OUT |= greenLED;
+            if(temp_flag >= 20)
+                temp_flag = 19;
+
+        }
 
         // TODO Bluetooth procedure
         if(procedure[0]) {
