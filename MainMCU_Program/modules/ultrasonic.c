@@ -101,15 +101,26 @@ void getDistance(unsigned int * data) {
     timer_init();
     _enable_interrupts();
 
-    // measuring the distance
-    P3OUT |= BIT0 | BIT1;                // assert both RIGHT and LEFT
-    __delay_cycles(320);                 // 10us wide on 16MHz clock
-    P3OUT  &= ~(BIT0 | BIT1);            // deassert
-    __delay_cycles(960000);             // 70ms with 16MHz clock measurement cycle
-//    __delay_cycles(500000);            // 0.5sec measurement cycle
+//    // measuring the distance
+//    P3OUT |= BIT0 | BIT1;                // assert both RIGHT and LEFT
+//    __delay_cycles(320);                 // 10us wide on 16MHz clock
+//    P3OUT  &= ~(BIT0 | BIT1);            // deassert
+//    __delay_cycles(960000);             // 70ms with 16MHz clock measurement cycle
+//    __delay_cycles(5000000);            // 0.5sec measurement cycle
+
+    P3OUT |= BIT0;
+    __delay_cycles(320);
+    P3OUT  &= ~BIT0;
+    __delay_cycles(960000);
+    TB0CCTL4 &= ~CCIE;
+
+    P3OUT |= BIT1;
+    __delay_cycles(320);
+    P3OUT  &= ~BIT1;
+    __delay_cycles(960000);
 
     // Disable timer interrupt
-    TB0CCTL4 &= ~CCIE;
+//    TB0CCTL4 &= ~CCIE;
     TB0CCTL5 &= ~CCIE;
 
     data[0] = distance_cm[0];

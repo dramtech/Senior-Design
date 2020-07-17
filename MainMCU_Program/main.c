@@ -41,8 +41,8 @@
 #include "modules/modules.h"
 
 
-#define redLED BIT0 // Red LED at P1.0
-#define greenLED BIT7 // Green LED at P9.7
+#define redLED BIT7 // Red LED at P1.6
+#define greenLED BIT6 // Green LED at P1.7
 #define ONE_SEC 32768
 #define ON 0x01
 #define OFF 0x00
@@ -52,7 +52,7 @@
 #define LEFT_CAR_POS_xMIN 0
 
 // Car detection distance
-#define DETECT_DIST 30
+#define DETECT_DIST 200
 
 // Road image position
 #define ROAD_POS_xMIN 31
@@ -140,10 +140,16 @@ int main(void)
     PM5CTL0 &= ~LOCKLPM5;  // Enable the GPIO pins
 
     // Set pins for LEDs
-    P1DIR |= redLED; // Direct pin as output
-    P9DIR |= greenLED; // Direct pin as output
-    P1OUT &= ~redLED; // Turn LED Off
-    P9OUT &= ~greenLED; // Turn LED Off
+    P1DIR |= redLED | greenLED; // Direct pin as output
+//    P9DIR |= greenLED; // Direct pin as output
+    P1OUT &= ~(redLED | greenLED); // Turn LED Off
+//    P9OUT &= ~greenLED; // Turn LED Off
+
+    // Set wear detection button
+    P1DIR &= ~BIT1;         // Set pin 1.1 as input
+    P1REN |= BIT1;          // Enable pull up resistor
+    P1OUT |= BIT1;          // Set pull up resistor
+
 
     Graphics_Context g_sContext;
 
@@ -210,17 +216,31 @@ int main(void)
                        ROAD_POS_xMIN,
                        ROAD_POS_yMIN);
 
+    Graphics_drawStringCentered(&g_sContext,
+                                "BT not connected",
+                                strlen("BT not connected"),
+                                (LCD_X_SIZE / 2) - 1,
+                                (Graphics_getStringHeight(&g_sContext) / 2) + 1,
+                                GRAPHICS_TRANSPARENT_TEXT);
+
+
     // Draw right car warning image
-    Graphics_drawImage(&g_sContext,
-                       &rightCarIndicator1BPP_COMP_RLE4,
-                       RIGHT_CAR_POS_xMIN,
-                       22);
+//    Graphics_drawImage(&g_sContext,
+//                       &rightCarIndicator1BPP_COMP_RLE4,
+//                       RIGHT_CAR_POS_xMIN,
+//                       22);
 
     // Text for debugging
 //    Graphics_drawString(&g_sContext, "Temperature: ", strlen("Temperature: "), 0, TEMP_TEXT_POS_yMIN, GRAPHICS_TRANSPARENT_TEXT);
 //    Graphics_drawString(&g_sContext, "Angle: ", strlen("Angle: "), 0, TEMP_TEXT_POS_yMIN - 15, GRAPHICS_TRANSPARENT_TEXT);
 
-    Graphics_Rectangle rect_R, rect_L, rect2, temp_del, angle_rect;
+    Graphics_Rectangle rect_R, rect_L, rect2, temp_del, angle_rect, title_rect;
+
+    // Title deleting square
+    title_rect.xMin = 0;
+    title_rect.xMax = LCD_X_SIZE - 1;
+    title_rect.yMin = 0;
+    title_rect.yMax = Graphics_getStringHeight(&g_sContext) + 1;
 
     // RIGHT car deleting square
     rect_R.xMin = RIGHT_CAR_POS_xMIN;
@@ -259,9 +279,24 @@ int main(void)
     init_timer();
     init_bluetooth();
 
-    _disable_interrupts();
-
+//    _disable_interrupts();
+    _enable_interrupts();
     while(1) {
+        if((P1IN & BIT1) == BIT1) {
+            procedure[1] = OFF;
+            procedure[3] = OFF;
+            P1OUT &= ~greenLED;
+        } else {
+            procedure[1] = ON;
+            procedure[3] = ON;
+            P1OUT |= greenLED;
+//            if(temp_flag >= 20)
+//                temp_flag = 19;
+//            if(angle_flag > 2) {
+//                angle_flag = 2;
+//            }
+
+        }
 
         // TODO Bluetooth procedure
         if(procedure[0]) {
@@ -294,7 +329,24 @@ int main(void)
 
                     // Set brightness
                     SetBrightness(initialSetting);
+
+                    // Set temperature unites
+                    //__delay_cycles(1000000);
+                    //tempUnit = receive_data();
+
                     _enable_interrupts();
+
+                    // Update title
+                    Graphics_setForegroundColor(&g_sContext, ClrBlack);
+                    Graphics_fillRectangle(&g_sContext, &title_rect);
+                    Graphics_setForegroundColor(&g_sContext, ClrWhite);
+
+                    Graphics_drawStringCentered(&g_sContext,
+                                                "Connected",
+                                                strlen("Connected"),
+                                                (LCD_X_SIZE / 2) - 1,
+                                                (Graphics_getStringHeight(&g_sContext) / 2) + 1,
+                                                GRAPHICS_TRANSPARENT_TEXT);
                 }
             }
 
@@ -305,6 +357,7 @@ int main(void)
 
               if (unit == 'C' || unit == 'F') {
                   tempUnit = unit;
+                  temp_flag = 19;
               } else if (value){
                   SetBrightness(value);
               }
@@ -315,12 +368,16 @@ int main(void)
             if(measure_dis) {
                 measure_dis = 0;
                 getDistance(distance_cm);
+
+                /*
                 rect2.xMax = Graphics_getStringWidth(&g_sContext, distance_str, -1);
                 sprintf(distance_str, "%d  %d", distance_cm[0], distance_cm[1]);
                 Graphics_setForegroundColor(&g_sContext, ClrBlack);
                 Graphics_fillRectangle(&g_sContext, &rect2);
                 Graphics_setForegroundColor(&g_sContext, ClrWhite);
                 Graphics_drawString(&g_sContext, distance_str, strlen(distance_str), 0, 1, GRAPHICS_TRANSPARENT_TEXT);
+                */
+
             }
 
             // Right car warning
@@ -373,7 +430,7 @@ int main(void)
         // TODO Gyro/Accelerometer procedure
         if(procedure[3]) {
             // Retrieve temperature data (every 10 seconds)
-            if(temp_flag == 20) {
+            if(temp_flag >= 20) {
                 temp_flag = 0;
 
                 getTemp(&temp);
@@ -405,7 +462,7 @@ int main(void)
             }
             // Retrieve angle of inclination (every 1 seconds)
             // (angle between 0 to 90 degrees)
-            if(angle_flag == 2) {
+            if(angle_flag >= 2) {
                 angle_flag = 0;
                 getAngle(&angle);
 
