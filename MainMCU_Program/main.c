@@ -52,7 +52,7 @@
 #define LEFT_CAR_POS_xMIN 0
 
 // Car detection distance
-#define DETECT_DIST 30
+#define DETECT_DIST 200
 
 // Road image position
 #define ROAD_POS_xMIN 31
@@ -290,8 +290,13 @@ int main(void)
             procedure[1] = ON;
             procedure[3] = ON;
             P1OUT |= greenLED;
-            if(temp_flag >= 20)
-                temp_flag = 19;
+
+//            if(temp_flag >= 20)
+//                temp_flag = 19;
+//            if(angle_flag > 2) {
+//                angle_flag = 2;
+//            }
+
 
         }
 
@@ -328,8 +333,9 @@ int main(void)
                     SetBrightness(initialSetting);
 
                     // Set temperature unites
-                    __delay_cycles(1000000);
-                    tempUnit = receive_data();
+
+                    //__delay_cycles(1000000);
+                    //tempUnit = receive_data();
 
                     _enable_interrupts();
 
@@ -365,12 +371,16 @@ int main(void)
             if(measure_dis) {
                 measure_dis = 0;
                 getDistance(distance_cm);
+
+                /*
                 rect2.xMax = Graphics_getStringWidth(&g_sContext, distance_str, -1);
                 sprintf(distance_str, "%d  %d", distance_cm[0], distance_cm[1]);
                 Graphics_setForegroundColor(&g_sContext, ClrBlack);
                 Graphics_fillRectangle(&g_sContext, &rect2);
                 Graphics_setForegroundColor(&g_sContext, ClrWhite);
                 Graphics_drawString(&g_sContext, distance_str, strlen(distance_str), 0, 1, GRAPHICS_TRANSPARENT_TEXT);
+                */
+
             }
 
             // Right car warning
@@ -423,7 +433,7 @@ int main(void)
         // TODO Gyro/Accelerometer procedure
         if(procedure[3]) {
             // Retrieve temperature data (every 10 seconds)
-            if(temp_flag == 20) {
+            if(temp_flag >= 20) {
                 temp_flag = 0;
 
                 getTemp(&temp);
@@ -455,7 +465,7 @@ int main(void)
             }
             // Retrieve angle of inclination (every 1 seconds)
             // (angle between 0 to 90 degrees)
-            if(angle_flag == 2) {
+            if(angle_flag >= 2) {
                 angle_flag = 0;
                 getAngle(&angle);
 
