@@ -153,7 +153,7 @@ int main(void)
 
     Graphics_Context g_sContext;
 
-    uint8_t procedure[4] = {ON,    // Bluetooth
+    uint8_t procedure[4] = {OFF,    // Bluetooth
                             OFF,   // Ultrasonic
                             OFF,   // Brightness
                             OFF};   //Gyro/Acc
@@ -169,7 +169,7 @@ int main(void)
     unsigned char c = 'A';
     int bluetooth_pair_flag = 0;
     const char *signal = "sSS"; // emergency signal value.
-    char tempUnit = 'F';
+    char tempUnit = 'C';
     unsigned char initialSetting = '\0';
 
     unsigned char value = '\0';
@@ -290,11 +290,13 @@ int main(void)
             procedure[1] = ON;
             procedure[3] = ON;
             P1OUT |= greenLED;
+
 //            if(temp_flag >= 20)
 //                temp_flag = 19;
 //            if(angle_flag > 2) {
 //                angle_flag = 2;
 //            }
+
 
         }
 
@@ -331,6 +333,7 @@ int main(void)
                     SetBrightness(initialSetting);
 
                     // Set temperature unites
+
                     //__delay_cycles(1000000);
                     //tempUnit = receive_data();
 
