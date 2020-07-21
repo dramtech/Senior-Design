@@ -41,8 +41,8 @@
 #include "modules/modules.h"
 
 
-#define redLED BIT7 // Red LED at P1.6
-#define greenLED BIT6 // Green LED at P1.7
+#define redLED BIT7 // Red LED at P1.6 -> 9.7
+#define greenLED BIT0 // Green LED at P1.7 -> 1.0
 #define ONE_SEC 32768
 #define ON 0x01
 #define OFF 0x00
@@ -52,7 +52,7 @@
 #define LEFT_CAR_POS_xMIN 0
 
 // Car detection distance
-#define DETECT_DIST 200
+#define DETECT_DIST 150
 
 // Road image position
 #define ROAD_POS_xMIN 31
@@ -107,7 +107,7 @@ void floatToString(float input, char * output) {
 #pragma vector = TIMER0_A0_VECTOR
 __interrupt void T0A0_ISR() {
     // Toggle the LEDs for debugging
-    P1OUT ^= redLED;
+    P9OUT ^= redLED;
     TA0CCR0 += 16384; // Schedule the next interrupt
 
     togg ^= BIT0;
@@ -140,20 +140,22 @@ int main(void)
     PM5CTL0 &= ~LOCKLPM5;  // Enable the GPIO pins
 
     // Set pins for LEDs
-    P1DIR |= redLED | greenLED; // Direct pin as output
+    P1DIR |= greenLED; // Direct pin as output
+    P9DIR |= redLED;
+
 //    P9DIR |= greenLED; // Direct pin as output
-    P1OUT &= ~(redLED | greenLED); // Turn LED Off
-//    P9OUT &= ~greenLED; // Turn LED Off
+    P1OUT &= ~(greenLED); // Turn LED Off
+    P9OUT &= ~redLED; // Turn LED Off
 
     // Set wear detection button
-    P1DIR &= ~BIT1;         // Set pin 1.1 as input
-    P1REN |= BIT1;          // Enable pull up resistor
-    P1OUT |= BIT1;          // Set pull up resistor
+    P5DIR &= ~BIT3;         // Set pin 1.1 as input -> 3.3
+    P5REN |= BIT3;          // Enable pull up resistor
+    P5OUT |= BIT3;          // Set pull up resistor
 
 
     Graphics_Context g_sContext;
 
-    uint8_t procedure[4] = {ON,    // Bluetooth
+    uint8_t procedure[4] = {OFF,    // Bluetooth
                             OFF,   // Ultrasonic
                             OFF,   // Brightness
                             OFF};   //Gyro/Acc
@@ -169,7 +171,7 @@ int main(void)
     unsigned char c = 'A';
     int bluetooth_pair_flag = 0;
     const char *signal = "sSS"; // emergency signal value.
-    char tempUnit = 'F';
+    char tempUnit = 'C';
     unsigned char initialSetting = '\0';
 
     unsigned char value = '\0';
@@ -282,7 +284,7 @@ int main(void)
 //    _disable_interrupts();
     _enable_interrupts();
     while(1) {
-        if((P1IN & BIT1) == BIT1) {
+        if((P5IN & BIT3) == BIT3) {
             procedure[1] = OFF;
             procedure[3] = OFF;
             P1OUT &= ~greenLED;
@@ -290,11 +292,21 @@ int main(void)
             procedure[1] = ON;
             procedure[3] = ON;
             P1OUT |= greenLED;
+
+<<<<<<< HEAD
+            if(temp_flag >= 20)
+                temp_flag = 19;
+            if(angle_flag > 2) {
+                angle_flag = 2;
+            }
+=======
 //            if(temp_flag >= 20)
 //                temp_flag = 19;
 //            if(angle_flag > 2) {
 //                angle_flag = 2;
 //            }
+>>>>>>> f741ef94d6f0c1f7aecf5633b728d161915bd534
+
 
         }
 
@@ -331,6 +343,7 @@ int main(void)
                     SetBrightness(initialSetting);
 
                     // Set temperature unites
+
                     //__delay_cycles(1000000);
                     //tempUnit = receive_data();
 
@@ -367,7 +380,7 @@ int main(void)
         if(procedure[1]) {
             if(measure_dis) {
                 measure_dis = 0;
-                getDistance(distance_cm);
+                //getDistance(distance_cm);
 
                 /*
                 rect2.xMax = Graphics_getStringWidth(&g_sContext, distance_str, -1);
@@ -400,6 +413,7 @@ int main(void)
                 Graphics_fillRectangle(&g_sContext, &rect_R);
             }
 
+            /*
             // Left car warning
             if(distance_cm[1] < DETECT_DIST) {
                 if(flag_L == 1) {
@@ -420,8 +434,9 @@ int main(void)
                 Graphics_fillRectangle(&g_sContext, &rect_L);
             }
 
-            // TODO left car warning - need second US sensor
+            */
 
+            // TODO left car warning - need second US sensor
         }
         // TODO Brightness control procedure
         if(procedure[2]) {
