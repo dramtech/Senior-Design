@@ -294,18 +294,22 @@ int main(void)
             P1OUT |= greenLED;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
             if(temp_flag >= 20)
                 temp_flag = 19;
             if(angle_flag > 2) {
                 angle_flag = 2;
             }
 =======
+=======
+>>>>>>> f741ef94d6f0c1f7aecf5633b728d161915bd534
 //            if(temp_flag >= 20)
 //                temp_flag = 19;
 //            if(angle_flag > 2) {
 //                angle_flag = 2;
 //            }
 >>>>>>> f741ef94d6f0c1f7aecf5633b728d161915bd534
+
 
 
         }
