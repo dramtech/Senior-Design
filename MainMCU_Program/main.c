@@ -155,7 +155,7 @@ int main(void)
 
     Graphics_Context g_sContext;
 
-    uint8_t procedure[4] = {OFF,    // Bluetooth
+    uint8_t procedure[4] = {ON,    // Bluetooth
                             OFF,   // Ultrasonic
                             OFF,   // Brightness
                             OFF};   //Gyro/Acc
@@ -384,7 +384,7 @@ int main(void)
         if(procedure[1]) {
             if(measure_dis) {
                 measure_dis = 0;
-                //getDistance(distance_cm);
+                getDistance(distance_cm);
 
                 /*
                 rect2.xMax = Graphics_getStringWidth(&g_sContext, distance_str, -1);
@@ -417,7 +417,7 @@ int main(void)
                 Graphics_fillRectangle(&g_sContext, &rect_R);
             }
 
-            /*
+            
             // Left car warning
             if(distance_cm[1] < DETECT_DIST) {
                 if(flag_L == 1) {
@@ -438,7 +438,7 @@ int main(void)
                 Graphics_fillRectangle(&g_sContext, &rect_L);
             }
 
-            */
+            
 
             // TODO left car warning - need second US sensor
         }
